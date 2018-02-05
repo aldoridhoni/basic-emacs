@@ -1,0 +1,8 @@
+.cache/
+.emacs.d/session*
+.emacs.d/recentf
+.emacs.d/elpa/
+.emacs.d/eshell/
+.emacs.d/config.el
+.emacs.d/network-security.data
+.local

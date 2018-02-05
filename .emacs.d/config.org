@@ -34,18 +34,17 @@
   (global-auto-revert-mode t)
 #+END_SRC
 
-- Delete trailing whitespace
-#+BEGIN_SRC emacs-lisp
-  (add-hook 'before-save-hook 'delete-trailing-whitespace)
-#+END_SRC
-
 - Window selection in cardinal direction
 #+BEGIN_SRC emacs-lisp
   (windmove-default-keybindings)
 #+END_SRC
 
-- Indent with spaces
+- Indent with space
+Learn to space not tab.
+https://www.python.org/dev/peps/pep-0008/#tabs-or-spaces
+https://blog.codinghorror.com/death-to-the-space-infidels/
 #+BEGIN_SRC emacs-lisp
+  (setq-default tab-width 4)
   (setq-default indent-tabs-mode nil)
 #+END_SRC
 
@@ -134,6 +133,21 @@ Currently just work on *nix systems.
           (setq helm-descbinds-window-style 'split)))
 #+END_SRC
 
+- Helm find-file keymap
+<tab> for entering or opening.
+#+BEGIN_SRC emacs-lisp
+  (with-eval-after-load 'helm-files
+    (define-key helm-map (kbd "<tab>") 'helm-execute-persistent-action)
+    (define-key helm-find-files-map
+      (kbd "S-<tab>") 'helm-find-files-up-one-level)
+    (define-key helm-find-files-map
+      (kbd "<backtab>") 'helm-find-files-up-one-level)
+    ;; For terminal.
+    (define-key helm-map (kbd "TAB") 'helm-execute-persistent-action)
+    (define-key helm-find-files-map
+      (kbd "S-TAB") 'helm-find-files-up-one-level)
+    (define-key helm-map (kbd "C-z") 'helm-select-action))
+#+END_SRC
 ** Which-Key
 #+BEGIN_SRC emacs-lisp
   (use-package which-key
@@ -168,11 +182,12 @@ Currently just work on *nix systems.
 #+END_SRC
 ** Restart Emacs
 #+BEGIN_SRC emacs-lisp
-    (use-package restart-emacs
-      :config (progn
-                (defalias 'r 'restart-emacs)
+  (use-package restart-emacs
+    :config (progn
+              (defalias 'r 'restart-emacs)
+              (when (file-exists-p (expand-file-name "start.sh" user-home-dir))
                 (defun restart-emacs--start-gui-using-sh (&optional args)
-                  (call-process (expand-file-name "start.sh" user-home-dir) nil 0 nil))))
+                  (call-process (expand-file-name "start.sh" user-home-dir) nil 0 nil)))))
 #+END_SRC
 
 ** Themes
@@ -180,17 +195,38 @@ Currently just work on *nix systems.
   (use-package material-theme)
   (use-package monokai-theme)
 #+END_SRC
+
+** Tramp
+#+BEGIN_SRC emacs-lisp
+  (setq tramp-default-method "ssh")
+#+END_SRC
 * Programming Language
 ** Python Mode
+- Indent
+#+BEGIN_SRC emacs-lisp
+  (setq python-indent-offset 4)
+#+END_SRC
+- Goggle yapf
+#+BEGIN_SRC emacs-lisp
+  (use-package yapfify
+    :defer t
+    :init
+    (add-hook 'python-mode-hook 'yapf-mode))
+#+END_SRC
 ** Rust Mode
+#+BEGIN_SRC emacs-lisp
+  (use-package rust-mode)
+#+END_SRC
 ** Typescript Mode
 #+BEGIN_SRC emacs-lisp
   (use-package typescript-mode)
 #+END_SRC
 ** Web Mode
+
 #+BEGIN_SRC emacs-lisp
   (use-package web-mode)
 #+END_SRC
+
 * Org-mode
 ** Set variables
 #+BEGIN_SRC emacs-lisp
@@ -233,6 +269,62 @@ Currently just work on *nix systems.
                     org-level-5))
       (set-face-attribute face nil :weight 'semi-bold :height 1.0)))
   )
+#+END_SRC
+
+* Other Modes
+** Fish
+#+BEGIN_SRC emacs-lisp
+  (use-package fish-mode)
+#+END_SRC
+
+* Eshell
+** Configuration
+#+BEGIN_SRC emacs-lisp
+    (use-package eshell
+      :init
+      (setq eshell-scroll-to-bottom-on-input 'all
+            eshell-error-if-no-glob t
+            eshell-hist-ignoredups t
+            eshell-save-history-on-exit t
+            eshell-prefer-lisp-functions nil
+            eshell-destroy-buffer-when-process-dies t
+            eshell-cmpl-cycle-completions nil
+            eshell-cmpl-dir-ignore "\\`\\(\\.\\.?\\|CVS\\|\\.svn\\|\\.git\\)/\\'"
+  ))
+#+END_SRC
+** Visual Executeables
+- Need special display - will run in term buffer.
+#+BEGIN_SRC emacs-lisp
+    (use-package eshell
+      :init
+      (add-hook 'eshell-mode-hook
+                (lambda ()
+                  (add-to-list 'eshell-visual-commands "ssh")
+                  (add-to-list 'eshell-visual-commands "tail")
+                  (add-to-list 'eshell-visual-commands "top")
+                  (add-to-list 'eshell-visual-options '("git" "--help" "--paginate"))
+                  (add-to-list 'eshell-visual-subcommands '("git" "log" "diff" "show"))
+  )))
+#+END_SRC
+
+** Aliases
+#+BEGIN_SRC emacs-lisp
+  (add-hook 'eshell-mode-hook (lambda ()
+      (eshell/alias "e" "find-file $1")
+      (eshell/alias "ff" "find-file $1")
+      (eshell/alias "emacs" "find-file $1")
+      (eshell/alias "ee" "find-file-other-window $1")
+      (eshell/alias "d" "dired $1")))
+
+#+END_SRC
+
+** Clear
+#+BEGIN_SRC emacs-lisp
+  (defun eshell/clear ()
+    "Clear the eshell buffer."
+    (let ((inhibit-read-only t))
+      (erase-buffer)
+      (eshell-send-input)))
 #+END_SRC
 * Setting Keybindings
 ** Clipboard
@@ -324,41 +416,156 @@ Currently just work on *nix systems.
      (move-beginning-of-line 1)
      (newline times)))
 #+END_SRC
+** Indent
+#+BEGIN_SRC emacs-lisp
+  (defun aldo/infer-indentation-style ()
+    ;; if our source file uses tabs, we use tabs, if spaces spaces, and if
+    ;; neither, we use the current indent-tabs-mode
+    (let ((space-count (how-many "^  " (point-min) (point-max)))
+          (tab-count (how-many "^\t" (point-min) (point-max))))
+      (if (> space-count tab-count) (setq indent-tabs-mode nil))
+      (if (> tab-count space-count) (setq indent-tabs-mode t))))
+#+END_SRC
+** Sudo edit
+# Taken from http://emacsredux.com/blog/2013/04/21/edit-files-as-root/
+#+BEGIN_SRC emacs-lisp
+  (defun sudo-edit (&optional arg)
+    "Edit currently visited file as root.
 
+  With a prefix ARG prompt for a file to visit.
+  Will also prompt for a file to visit if current
+  buffer is not visiting a file."
+    (interactive "P")
+    (if (or arg (not buffer-file-name))
+        (find-file (concat "/sudo::"
+                           (helm-read-file-name "Find file(as root): ")))
+      (find-alternate-file (concat "/sudo::" buffer-file-name))))
+#+END_SRC
+** Duplicate line
+#+BEGIN_SRC emacs-lisp
+  (defun duplicate-line()
+    (interactive)
+    (move-beginning-of-line 1)
+    (kill-line)
+    (yank)
+    (open-line 1)
+    (next-line 1)
+    (yank)
+    )
+#+END_SRC
+
+#+BEGIN_SRC emacs-lisp
+  (global-set-key(kbd "C-S-d") 'duplicate-line)
+#+END_SRC
+** Cycle buffers
+- Next and Previous buffer
+#+BEGIN_SRC emacs-lisp
+  (setq useful-buffers-regexp '("\\*scratch\\*" "\\*Help\\*"))
+  (setq useless-buffers-regexp '("*\.\+"))
+
+  (defun _aldo/useful-buffer-p (buffer)
+    (let ((buf-name (buffer-name buffer)))
+      (or
+       (cl-loop for useful-regexp in useful-buffers-regexp
+                thereis (string-match-p useful-regexp buf-name))
+       (cl-loop for useless-regexp in useless-buffers-regexp
+                never (string-match-p useless-regexp buf-name))
+       (with-current-buffer buffer
+         (derived-mode-p 'comint-mode)))))
+
+  (defun _aldo/useless-buffer-p (buffer)
+    (not (_aldo/useful-buffer-p buffer)))
+
+  (defun _aldo/change-buffer (action)
+    (interactive)
+    (let ((start-buffer (buffer-name)))
+      (funcall action)
+      (while
+          (and
+           (_aldo/useless-buffer-p (current-buffer))
+           (not (equal start-buffer (buffer-name))))
+        (funcall action))))
+
+  (defun _aldo/next-buffer ()
+    (interactive)
+    (_aldo/change-buffer 'next-buffer))
+
+  (defun _aldo/previous-buffer ()
+    (interactive)
+    (_aldo/change-buffer 'previous-buffer))
+#+END_SRC
+
+- Remap command
+#+BEGIN_SRC emacs-lisp
+  (global-set-key [remap next-buffer] '_aldo/next-buffer)
+  (global-set-key [remap previous-buffer] '_aldo/previous-buffer)
+#+END_SRC
+
+- Add list of useful buffers
+#+BEGIN_SRC emacs-lisp
+  (push "\\*fish\\*\.\+" useful-buffers-regexp)
+  (push "\\*ssh\\*\*" useful-buffers-regexp)
+  (push "\\*tmux\\*\*" useful-buffers-regexp)
+  (push "\\*Group\\*\*" useful-buffers-regexp)
+  (push "\\*\\(ansi-term\\|eshell\\|shell\\|terminal.+\\)\\(-[0-9]+\\)?\\*" useful-buffers-regexp)
+#+END_SRC
+* Hooks
+** Programming modes
+- Infer indentation
+#+BEGIN_SRC emacs-lisp
+  (add-hook 'prog-mode-hook 'aldo/infer-indentation-style)
+#+END_SRC
+** Other
+- Delete trailing whitespace
+#+BEGIN_SRC emacs-lisp
+  (add-hook 'before-save-hook 'delete-trailing-whitespace)
+#+END_SRC
+
+* Macro
+- kmacro-name-last-macro --> Mx insert-kbd-macro
+** Duplicate line
+#+BEGIN_SRC emacs-lisp
+(fset 'dups
+   (lambda (&optional arg) "Keyboard macro." (interactive "p")
+(kmacro-exec-ring-item (quote ([5 67108896 1 134217847 5 return 25] 0 "%d")) arg)))
+#+END_SRC
 * X Window
 ** Setting Theme Hook
 #+BEGIN_SRC emacs-lisp
   (defun aldo/theme-hook ()
+    (ad-activate 'load-theme)
     (custom-theme-set-faces
      'material-light
-     '(font-lock-builtin-face ((t (:foreground "#626fc9" :weight normal))))
-     '(font-lock-comment-face ((t (:foreground "#7f7f7f"))))
-     '(font-lock-constant-face ((t (:foreground "#7653c1"))))
-     '(font-lock-doc-face ((t (:foreground "#1a93ae"))))
-     '(font-lock-function-name-face ((t (:foreground "#43279a"))))
-     '(font-lock-keyword-face ((t (:foreground "#6700b9" :weight normal))))
-     '(font-lock-preprocessor-face ((t (:foreground "#434343"))))
-     '(font-lock-string-face ((t (:foreground "#bc670f"))))
-     '(font-lock-type-face ((t (:foreground "#699d36" :slant normal))))
-     '(font-lock-variable-name-face ((t (:foreground "#7b8c4d"))))
-     '(font-lock-warning-face ((t (:foreground "#f93232" :underline t :slant italic :weight bold))))
+     '(font-lock-builtin-face ((t (:foreground "#626fc9" :weight normal))) t)
+     '(font-lock-comment-face ((t (:foreground "#7f7f7f"))) t)
+     '(font-lock-constant-face ((t (:foreground "#7653c1"))) t)
+     '(font-lock-doc-face ((t (:foreground "#1a93ae"))) t)
+     '(font-lock-function-name-face ((t (:foreground "#43279a"))) t)
+     '(font-lock-keyword-face ((t (:foreground "#6700b9" :weight normal))) t)
+     '(font-lock-preprocessor-face ((t (:foreground "#434343"))) t)
+     '(font-lock-string-face ((t (:foreground "#bc670f"))) t)
+     '(font-lock-type-face ((t (:foreground "#699d36" :slant normal))) t)
+     '(font-lock-variable-name-face ((t (:foreground "#7b8c4d"))) t)
+     '(font-lock-warning-face ((t (:foreground "#f93232" :underline t :slant italic :weight bold))) t)
      ;; Org
-     '(org-level-1 ((t (:foreground "#3a81c3" :background nil))))
-     '(org-level-2 ((t (:foreground "#43279a" :background nil))))
-     '(org-level-3 ((t (:foreground "#626fc9" :background nil))))
-     '(org-code ((t (:background nil))))
-     '(org-block-background ((t (:background "#f4f4f4"))))
+     '(org-level-1 ((t (:foreground "#3a81c3" :background nil))) t)
+     '(org-level-2 ((t (:foreground "#43279a" :background nil))) t)
+     '(org-level-3 ((t (:foreground "#626fc9" :background nil))) t)
+     '(org-code ((t (:background nil))) t)
+     '(org-block-background ((t (:background "#f4f4f4"))) t)
      '(org-block-begin-line ((t (:background "#eaeaef" :foreground "#7e7e7e" :box nil :slant italic))) t)
      '(org-block-end-line ((t (:background "#eaeaef" :foreground "#7e7e7e" :box nil :slant italic))) t)
      ;; Helm
-     '(helm-ff-file ((t (:foreground "#4499ff" :background nil))))
-     '(helm-ff-dotted-directory ((t (:foreground "#121212" :background nil))))
-     '(helm-selection-line ((t (:background "#e8e8e8"))))
-     '(set-face-bold-p 'bold nil)
+     '(helm-ff-file ((t (:foreground "#4499ff" :background nil))) t)
+     '(helm-ff-dotted-directory ((t (:foreground "#121212" :background nil))) t)
+     '(helm-selection-line ((t (:background "#e8e8e8"))) t)
+     '(helm-source-header ((t (:background "#e8e8e8"))) t)
+     '(mode-line ((t (:background "#e8e8e8" :foreground "#212121" :box '(:line-width 2 :color "#ECEFF1")))) t)
      )
-    (set-face-attribute 'mode-line nil :background "#e8e8e8" :foreground "#212121" :box '(:line-width 2 :color "#ECEFF1"))
+    ;; Global change
     (set-face-attribute 'linum nil :weight 'normal :height 1.0)
-  )
+    (set-face-bold-p 'bold nil)
+    )
 #+END_SRC
 
 ** Do something if in graphic mode
@@ -366,23 +573,42 @@ Currently just work on *nix systems.
    (when window-system
      ;; Scroll-bar
      (toggle-scroll-bar -1)
+
      ;; Maximize initial frame
      (add-to-list 'initial-frame-alist '(fullscreen . maximized))
      (add-to-list 'default-frame-alist '(fullscreen . maximized))
+
      ;; Set theme
      (load-theme 'material-light)
      (enable-theme 'material-light)
      (aldo/theme-hook)
+
      ;; Hide tool-bar
      (tool-bar-mode -1)
      (redraw-display)
-     ;; Zoning after 120s
-     (setq zone-timer (run-with-idle-timer 120 t 'zone))
-   )
+
+     ;; Zoning after 50min, turn off with 'zone-leave-me-alone
+     (require 'zone)
+     (zone-when-idle (* 50 60))
+
+     ;; Font
+     (cond
+      ((member "PragmataPro" (font-family-list))
+       (set-frame-font "PragmataPro-11" nil t))
+      ((member "Source Code Pro" (font-family-list))
+       (set-frame-font "Source Code Pro-11" nil t))
+      ((member "Inconsolata" (font-family-list))
+       (set-frame-font "Inconsolata-11" nil t))
+      ((member "DejaVu Sans Mono" (font-family-list))
+       (set-frame-font "DejaVu Sans Mono-11" nil t)))
+     )
  #+END_SRC
 
 ** Load theme hook
  #+BEGIN_SRC emacs-lisp
+   (defvar after-load-theme-hook nil)
+   (defadvice load-theme (after run-after-load-theme-hook activate)
+     (run-hooks 'after-load-theme-hook))
    (add-hook 'after-load-theme-hook 'aldo/theme-hook)
  #+END_SRC
 ** Starting server
@@ -399,4 +625,3 @@ Currently just work on *nix systems.
           (lambda ()
             (message "This too shall pass")))
 #+END_SRC
-
