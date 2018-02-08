@@ -11,6 +11,7 @@
         make-backup-files nil
         initial-scratch-message nil
         delete-trailing-lines nil
+        visible-bell t
         server-name "basic")
 #+END_SRC
 
@@ -24,7 +25,7 @@
   (global-hl-line-mode t)
 #+END_SRC
 
--Line Number
+- Line Number
 #+BEGIN_SRC emacs-lisp
   (global-linum-mode t)
 #+END_SRC
@@ -37,6 +38,11 @@
 - Window selection in cardinal direction
 #+BEGIN_SRC emacs-lisp
   (windmove-default-keybindings)
+#+END_SRC
+
+- Enable Reveal mode
+#+BEGIN_SRC emacs-lisp
+  (global-reveal-mode t)
 #+END_SRC
 
 - Indent with space
@@ -53,6 +59,10 @@ https://blog.codinghorror.com/death-to-the-space-infidels/
   (fset 'yes-or-no-p 'y-or-n-p)
 #+END_SRC
 
+- tramp
+#+BEGIN_SRC emacs-lisp
+  (setq tramp-default-method "ssh")
+#+END_SRC
 ** Home folder hacks
 - User home folder
 Aside from =(getenv "HOME")=, we can use tilde.
@@ -69,14 +79,13 @@ Currently just work on *nix systems.
   (defconst user-home-real-dir
     (if (getenv "REAL_HOME")
         (file-name-as-directory (getenv "REAL_HOME"))
-      (file-name-as-directory
-       (expand-file-name user-real-login-name "/home"))))
+      (expand-file-name user-real-login-name "/home")))
 #+END_SRC
 
 #+BEGIN_SRC emacs-lisp
 (defun abbreviate-file-name (filename) filename)
 #+END_SRC
-* Setting Package
+* Packages
 ** Meta Package - Package
 #+BEGIN_SRC emacs-lisp
 (require 'package)
@@ -89,52 +98,55 @@ Currently just work on *nix systems.
 ** Fetch packages-list
 #+BEGIN_SRC emacs-lisp
   (unless (file-exists-p package-user-dir)
-        (package-refresh-contents))
+    (package-refresh-contents))
 #+END_SRC
 
 ** Install use-packages
 #+BEGIN_SRC emacs-lisp
   (unless (package-installed-p 'use-package)
+    (package-refresh-contents)
     (package-install 'use-package))
-  (require 'use-package)
+  (eval-when-compile
+    (require 'use-package))
   (setq use-package-always-ensure t)
+  (setq use-package-compute-statistics t)
 #+END_SRC
 
 ** Setting Helm
 #+BEGIN_SRC emacs-lisp
-    (use-package helm
-      :config
-      (progn
-        (helm-mode)
-        (setq helm-ff-file-name-history-use-recentf t
-              help-window-select t
-              helm-display-header-line nil
-              helm-autoresize-mode 1)
-        (defvar helm-source-header-default-background
-           (face-attribute 'helm-source-header :background))
-        (defvar helm-source-header-default-foreground
-          (face-attribute 'helm-source-header :foreground))
-        (defvar helm-source-header-default-box
-          (face-attribute 'helm-source-header :box))
-        (defvar helm-source-header-default-height
-          (face-attribute 'helm-source-header :height))
-        )
-      :bind(("M-x" . helm-M-x)
-            ("C-x b" . helm-mini)
-            ("C-x C-f" . helm-find-files))
-  )
+  (use-package helm
+    :config
+    (progn
+      (helm-mode)
+      (setq helm-ff-file-name-history-use-recentf t
+            help-window-select t
+            helm-display-header-line nil
+            helm-autoresize-mode 1)
+      (defvar helm-source-header-default-background
+        (face-attribute 'helm-source-header :background))
+      (defvar helm-source-header-default-foreground
+        (face-attribute 'helm-source-header :foreground))
+      (defvar helm-source-header-default-box
+        (face-attribute 'helm-source-header :box))
+      (defvar helm-source-header-default-height
+        (face-attribute 'helm-source-header :height))
+      )
+    :bind(("M-x" . helm-M-x)
+          ("C-x b" . helm-mini)
+          ("C-x C-f" . helm-find-files))
+    )
 #+END_SRC
 
 #+BEGIN_SRC emacs-lisp
-      (use-package helm-descbinds
-        :config
-        (progn
-          (helm-descbinds-mode)
-          (setq helm-descbinds-window-style 'split)))
+  (use-package helm-descbinds
+    :config
+    (progn
+      (helm-descbinds-mode)
+      (setq helm-descbinds-window-style 'split)))
 #+END_SRC
 
 - Helm find-file keymap
-<tab> for entering or opening.
+`<tab>` for entering or opening.
 #+BEGIN_SRC emacs-lisp
   (with-eval-after-load 'helm-files
     (define-key helm-map (kbd "<tab>") 'helm-execute-persistent-action)
@@ -151,19 +163,19 @@ Currently just work on *nix systems.
 ** Which-Key
 #+BEGIN_SRC emacs-lisp
   (use-package which-key
-          :config
-          (progn
-            (which-key-mode t)
-            (setq which-key-popup-type 'minibuffer
-                  which-key-idle-delay 0.4)))
+    :config
+    (progn
+      (which-key-mode t)
+      (setq which-key-popup-type 'minibuffer
+            which-key-idle-delay 0.4)))
 #+END_SRC
 
 ** Multi-term
 #+BEGIN_SRC emacs-lisp
   (use-package multi-term
     :config
-    (setq multi-term-program "fish"
-          multi-term-buffer-name "fish shell* *"
+    (setq multi-term-program "bash"
+          multi-term-buffer-name "shell* *"
           multi-term-default-dir 'user-home-real-dir))
 #+END_SRC
 
@@ -195,21 +207,28 @@ Currently just work on *nix systems.
   (use-package material-theme)
   (use-package monokai-theme)
 #+END_SRC
-
-** Tramp
+** Mode Line
+- Telephone Line
 #+BEGIN_SRC emacs-lisp
-  (setq tramp-default-method "ssh")
+  (use-package telephone-line
+    :config
+    (progn
+      (telephone-line-mode 1)))
 #+END_SRC
 * Programming Language
 ** Python Mode
-- Indent
 #+BEGIN_SRC emacs-lisp
-  (setq python-indent-offset 4)
+  (use-package python
+    :mode ("\\.py\\'" . python-mode)
+    :interpreter ("python3" . python-mode)
+    :config
+    (setq py-python-command "python3")
+    (setq python-shell-interpreter "python3")
+    (setq python-indent-offset 4))
 #+END_SRC
 - Goggle yapf
 #+BEGIN_SRC emacs-lisp
   (use-package yapfify
-    :defer t
     :init
     (add-hook 'python-mode-hook 'yapf-mode))
 #+END_SRC
@@ -222,11 +241,14 @@ Currently just work on *nix systems.
   (use-package typescript-mode)
 #+END_SRC
 ** Web Mode
-
 #+BEGIN_SRC emacs-lisp
-  (use-package web-mode)
+  (use-package web-mode
+    :mode "\\.html\\'")
 #+END_SRC
-
+** Markdown Mode
+#+BEGIN_SRC emacs-lisp
+  (use-package markdown-mode)
+#+END_SRC
 * Org-mode
 ** Set variables
 #+BEGIN_SRC emacs-lisp
@@ -273,6 +295,7 @@ Currently just work on *nix systems.
 
 * Other Modes
 ** Fish
+- Fish shell
 #+BEGIN_SRC emacs-lisp
   (use-package fish-mode)
 #+END_SRC
@@ -560,7 +583,11 @@ Currently just work on *nix systems.
      '(helm-ff-dotted-directory ((t (:foreground "#121212" :background nil))) t)
      '(helm-selection-line ((t (:background "#e8e8e8"))) t)
      '(helm-source-header ((t (:background "#e8e8e8"))) t)
-     '(mode-line ((t (:background "#e8e8e8" :foreground "#212121" :box '(:line-width 2 :color "#ECEFF1")))) t)
+     ;; Which Key
+     '(which-key-local-map-description-face ((t (:foreground "dark orange"))) t)
+     ;; Mode Line
+     '(mode-line ((t (:background "#e8e8e8" :foreground "#212121" :box (:line-width 1 :color "#ECEFF1")))) t)
+     '(mode-line-inactive ((t (:background "#e8e8e8" :foreground "#212121" :box (:line-width 1 :color "#ECEFF1")))) t)
      )
     ;; Global change
     (set-face-attribute 'linum nil :weight 'normal :height 1.0)
@@ -579,7 +606,7 @@ Currently just work on *nix systems.
      (add-to-list 'default-frame-alist '(fullscreen . maximized))
 
      ;; Set theme
-     (load-theme 'material-light)
+     (load-theme 'material-light t)
      (enable-theme 'material-light)
      (aldo/theme-hook)
 
