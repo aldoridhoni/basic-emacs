@@ -45,6 +45,26 @@
   (global-reveal-mode t)
 #+END_SRC
 
+- Auto insert closing bracket
+#+BEGIN_SRC emacs-lisp
+  (electric-pair-mode t)
+#+END_SRC
+
+- Turn on bracket match highlight
+#+BEGIN_SRC emacs-lisp
+  (show-paren-mode t)
+#+END_SRC
+
+- Save minibuffer history
+#+BEGIN_SRC emacs-lisp
+  (savehist-mode t)
+#+END_SRC
+
+- Display 'lambda' as 'λ'
+#+BEGIN_SRC emacs-lisp
+  (global-prettify-symbols-mode t)
+#+END_SRC
+
 - Indent with space
 Learn to space not tab.
 https://www.python.org/dev/peps/pep-0008/#tabs-or-spaces
@@ -79,7 +99,8 @@ Currently just work on *nix systems.
   (defconst user-home-real-dir
     (if (getenv "REAL_HOME")
         (file-name-as-directory (getenv "REAL_HOME"))
-      (expand-file-name user-real-login-name "/home")))
+      (file-name-as-directory
+       (expand-file-name user-real-login-name "/home"))))
 #+END_SRC
 
 #+BEGIN_SRC emacs-lisp
@@ -112,6 +133,14 @@ Currently just work on *nix systems.
   (setq use-package-compute-statistics t)
 #+END_SRC
 
+** Bundled
+- dired
+#+BEGIN_SRC emacs-lisp
+  (require 'dired )
+  (put 'dired-find-alternate-file 'disabled nil)
+  (define-key dired-mode-map (kbd "RET") 'dired-find-alternate-file) ; was dired-advertised-find-file
+#+END_SRC
+
 ** Setting Helm
 #+BEGIN_SRC emacs-lisp
   (use-package helm
@@ -132,6 +161,7 @@ Currently just work on *nix systems.
         (face-attribute 'helm-source-header :height))
       )
     :bind(("M-x" . helm-M-x)
+          ("<menu>" . helm-M-x)
           ("C-x b" . helm-mini)
           ("C-x C-f" . helm-find-files))
     )
@@ -253,44 +283,44 @@ Currently just work on *nix systems.
 ** Set variables
 #+BEGIN_SRC emacs-lisp
   (setq org-directory (file-name-as-directory
-                        (concat user-home-real-dir "org"))
-          org-agenda-span 14
-          org-agenda-files (file-expand-wildcards (concat org-directory "*.org"))
-          org-agenda-prefix-format "  %-17:c%?-12t% s"
-          org-agenda-skip-scheduled-if-done t
-          org-agenda-skip-deadline-if-done t
-          org-reverse-note-order t
-          org-export-with-section-numbers nil
-          org-export-with-toc nil
-          org-hide-leading-stars t
-          org-default-notes-file (expand-file-name "notes.org" org-directory)
-          org-src-fontify-natively t
-          org-startup-indented t
-          org-bullets-mode 1)
+                       (concat user-home-real-dir "org"))
+        org-agenda-span 14
+        org-agenda-files (file-expand-wildcards (concat org-directory "*.org"))
+        org-agenda-prefix-format "  %-17:c%?-12t% s"
+        org-agenda-skip-scheduled-if-done t
+        org-agenda-skip-deadline-if-done t
+        org-reverse-note-order t
+        org-export-with-section-numbers nil
+        org-export-with-toc nil
+        org-hide-leading-stars t
+        org-default-notes-file (expand-file-name "notes.org" org-directory)
+        org-src-fontify-natively t
+        org-startup-indented t
+        org-bullets-mode 1)
 
-    (define-key global-map "\C-cc" 'org-capture)
+  (define-key global-map "\C-cc" 'org-capture)
 #+END_SRC
 
 ** Org bullet
 #+BEGIN_SRC emacs-lisp
   (use-package org-bullets
-               :ensure t
-               :config
-               (add-hook 'org-mode-hook (lambda () (org-bullets-mode 1))))
+    :ensure t
+    :config
+    (add-hook 'org-mode-hook (lambda () (org-bullets-mode 1))))
 #+END_SRC
 
 ** Level remove bold
 #+BEGIN_SRC emacs-lisp
   (add-hook 'org-mode-hook
-    (lambda ()
-    "Stop the org-level headers from increasing in height relative to the other text."
-    (dolist (face '(org-level-1
-                    org-level-2
-                    org-level-3
-                    org-level-4
-                    org-level-5))
-      (set-face-attribute face nil :weight 'semi-bold :height 1.0)))
-  )
+            (lambda ()
+              "Stop the org-level headers from increasing in height relative to the other text."
+              (dolist (face '(org-level-1
+                              org-level-2
+                              org-level-3
+                              org-level-4
+                              org-level-5))
+                (set-face-attribute face nil :weight 'semi-bold :height 1.0)))
+            )
 #+END_SRC
 
 * Other Modes
@@ -303,41 +333,45 @@ Currently just work on *nix systems.
 * Eshell
 ** Configuration
 #+BEGIN_SRC emacs-lisp
-    (use-package eshell
-      :init
-      (setq eshell-scroll-to-bottom-on-input 'all
-            eshell-error-if-no-glob t
-            eshell-hist-ignoredups t
-            eshell-save-history-on-exit t
-            eshell-prefer-lisp-functions nil
-            eshell-destroy-buffer-when-process-dies t
-            eshell-cmpl-cycle-completions nil
-            eshell-cmpl-dir-ignore "\\`\\(\\.\\.?\\|CVS\\|\\.svn\\|\\.git\\)/\\'"
-  ))
+  (use-package eshell
+    :config
+    (setq eshell-scroll-to-bottom-on-input 'all
+          eshell-error-if-no-glob t
+          eshell-hist-ignoredups t
+          eshell-save-history-on-exit t
+          eshell-prefer-lisp-functions nil
+          eshell-destroy-buffer-when-process-dies t
+          eshell-cmpl-cycle-completions nil
+          eshell-cmpl-dir-ignore "\\`\\(\\.\\.?\\|CVS\\|\\.svn\\|\\.git\\)/\\'"
+          ))
 #+END_SRC
 ** Visual Executeables
 - Need special display - will run in term buffer.
 #+BEGIN_SRC emacs-lisp
-    (use-package eshell
-      :init
-      (add-hook 'eshell-mode-hook
-                (lambda ()
-                  (add-to-list 'eshell-visual-commands "ssh")
-                  (add-to-list 'eshell-visual-commands "tail")
-                  (add-to-list 'eshell-visual-commands "top")
-                  (add-to-list 'eshell-visual-options '("git" "--help" "--paginate"))
-                  (add-to-list 'eshell-visual-subcommands '("git" "log" "diff" "show"))
-  )))
+  (use-package eshell
+    :init
+    (add-hook 'eshell-mode-hook
+              (lambda ()
+                (add-to-list 'eshell-visual-commands "ssh")
+                (add-to-list 'eshell-visual-commands "tail")
+                (add-to-list 'eshell-visual-commands "top")
+                (add-to-list 'eshell-visual-options '("git" "--help" "--paginate"))
+                (add-to-list 'eshell-visual-subcommands '("git" "log" "diff" "show"))
+                )))
 #+END_SRC
 
 ** Aliases
 #+BEGIN_SRC emacs-lisp
-  (add-hook 'eshell-mode-hook (lambda ()
-      (eshell/alias "e" "find-file $1")
-      (eshell/alias "ff" "find-file $1")
-      (eshell/alias "emacs" "find-file $1")
-      (eshell/alias "ee" "find-file-other-window $1")
-      (eshell/alias "d" "dired $1")))
+  (use-package eshell
+    :init
+    (add-hook 'eshell-mode-hook
+              (lambda ()
+                (eshell/alias "e" "find-file $1")
+                (eshell/alias "ff" "find-file $1")
+                (eshell/alias "emacs" "find-file $1")
+                (eshell/alias "ee" "find-file-other-window $1")
+                (eshell/alias "d" "dired $1")
+                (eshell/alias "c" "eshell/clear"))))
 
 #+END_SRC
 
@@ -483,7 +517,7 @@ Currently just work on *nix systems.
 ** Cycle buffers
 - Next and Previous buffer
 #+BEGIN_SRC emacs-lisp
-  (setq useful-buffers-regexp '("\\*scratch\\*" "\\*Help\\*"))
+  (setq useful-buffers-regexp '("\\*scratch\\*"))
   (setq useless-buffers-regexp '("*\.\+"))
 
   (defun _aldo/useful-buffer-p (buffer)
@@ -530,7 +564,31 @@ Currently just work on *nix systems.
   (push "\\*ssh\\*\*" useful-buffers-regexp)
   (push "\\*tmux\\*\*" useful-buffers-regexp)
   (push "\\*Group\\*\*" useful-buffers-regexp)
+  (push "\\*eww\\*\*" useful-buffers-regexp)
   (push "\\*\\(ansi-term\\|eshell\\|shell\\|terminal.+\\)\\(-[0-9]+\\)?\\*" useful-buffers-regexp)
+#+END_SRC
+** Empty Kill ring
+#+BEGIN_SRC emacs-lisp
+  (defun aldo/empty-killring ()
+    (interactive)
+    (progn
+      (setq kill-ring nil)
+      (garbage-collect)))
+#+END_SRC
+** Open current file in eww & xwidget webkit
+- Emacs Web Wowser
+#+BEGIN_SRC emacs-lisp
+  (defun aldo/open-buffer-in-eww ()
+    (interactive)
+    (eww (concat "file://" buffer-file-truename)))
+#+END_SRC
+
+- Xwidget Webkit
+#+BEGIN_SRC emacs-lisp
+  (defun aldo/open-buffer-in-xwidget-webkit ()
+    (interactive)
+    (xwidget-webkit-browse-url
+     (concat "file://" buffer-file-truename)))
 #+END_SRC
 * Hooks
 ** Programming modes

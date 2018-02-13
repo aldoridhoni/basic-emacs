@@ -5,4 +5,6 @@
 .emacs.d/eshell/
 .emacs.d/config.el
 .emacs.d/network-security.data
+.emacs.d/history
+.emacs.d/games*
 .local
