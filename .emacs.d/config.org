@@ -15,9 +15,29 @@
         server-name "basic")
 #+END_SRC
 
+- GC treshold
+#+BEGIN_SRC emacs-lisp
+  (setq gc-cons-threshold 100000000)
+#+END_SRC
+
+- Cursor type to bar
+#+BEGIN_SRC emacs-lisp
+  (setq-default cursor-type (quote bar))
+#+END_SRC
+
 - Hide menu bar
 #+BEGIN_SRC emacs-lisp
   (menu-bar-mode -1)
+#+END_SRC
+
+- Hide tool bar
+#+BEGIN_SRC emacs-lisp
+  (tool-bar-mode -1)
+#+END_SRC
+
+- Hide scroll bar
+#+BEGIN_SRC emacs-lisp
+  (set-scroll-bar-mode nil)
 #+END_SRC
 
 - Line highlighting
@@ -27,7 +47,8 @@
 
 - Line Number
 #+BEGIN_SRC emacs-lisp
-  (global-linum-mode t)
+  (global-display-line-numbers-mode 1)
+  (setq display-line-number-type t)
 #+END_SRC
 
 - Auto refresh file form disk
@@ -35,7 +56,7 @@
   (global-auto-revert-mode t)
 #+END_SRC
 
-- Window selection in cardinal direction
+- Window selection in cardinal direction with <shift> key.
 #+BEGIN_SRC emacs-lisp
   (windmove-default-keybindings)
 #+END_SRC
@@ -133,12 +154,21 @@ Currently just work on *nix systems.
   (setq use-package-compute-statistics t)
 #+END_SRC
 
-** Bundled
+** Bundled packages
 - dired
 #+BEGIN_SRC emacs-lisp
   (require 'dired )
   (put 'dired-find-alternate-file 'disabled nil)
   (define-key dired-mode-map (kbd "RET") 'dired-find-alternate-file) ; was dired-advertised-find-file
+#+END_SRC
+** Which-Key
+#+BEGIN_SRC emacs-lisp
+  (use-package which-key
+    :config
+    (progn
+      (which-key-mode t)
+      (setq which-key-popup-type 'minibuffer
+            which-key-idle-delay 0.4)))
 #+END_SRC
 
 ** Setting Helm
@@ -190,15 +220,6 @@ Currently just work on *nix systems.
       (kbd "S-TAB") 'helm-find-files-up-one-level)
     (define-key helm-map (kbd "C-z") 'helm-select-action))
 #+END_SRC
-** Which-Key
-#+BEGIN_SRC emacs-lisp
-  (use-package which-key
-    :config
-    (progn
-      (which-key-mode t)
-      (setq which-key-popup-type 'minibuffer
-            which-key-idle-delay 0.4)))
-#+END_SRC
 
 ** Multi-term
 #+BEGIN_SRC emacs-lisp
@@ -234,8 +255,10 @@ Currently just work on *nix systems.
 
 ** Themes
 #+BEGIN_SRC emacs-lisp
-  (use-package material-theme)
-  (use-package monokai-theme)
+  (use-package material-theme
+    :defer t)
+  (use-package monokai-theme
+    :defer t)
 #+END_SRC
 ** Mode Line
 - Telephone Line
@@ -296,7 +319,8 @@ Currently just work on *nix systems.
         org-default-notes-file (expand-file-name "notes.org" org-directory)
         org-src-fontify-natively t
         org-startup-indented t
-        org-bullets-mode 1)
+        org-bullets-mode 1
+        org-M-RET-may-split-line nil)
 
   (define-key global-map "\C-cc" 'org-capture)
 #+END_SRC
@@ -371,13 +395,13 @@ Currently just work on *nix systems.
                 (eshell/alias "emacs" "find-file $1")
                 (eshell/alias "ee" "find-file-other-window $1")
                 (eshell/alias "d" "dired $1")
-                (eshell/alias "c" "eshell/clear"))))
+                (eshell/alias "c" "eshell/clear $1"))))
 
 #+END_SRC
 
 ** Clear
 #+BEGIN_SRC emacs-lisp
-  (defun eshell/clear ()
+  (defun eshell/cls ()
     "Clear the eshell buffer."
     (let ((inhibit-read-only t))
       (erase-buffer)
@@ -435,13 +459,12 @@ Currently just work on *nix systems.
 
 - Hook for term-mode
 #+BEGIN_SRC emacs-lisp
-  (add-hook 'term-mode-hook (lambda ()
-    (setq term-buffer-maximum-size 10000)
-    (setq show-trailingwhitespace nil)
-    (linum-mode -1)
-    (line-number-mode -1)
-    (define-key term-raw-map (kbd "C-y") 'term-paste)
-  ))
+    (add-hook 'term-mode-hook (lambda ()
+      (setq term-buffer-maximum-size 10000)
+      (setq show-trailingwhitespace nil)
+      (display-line-numbers-mode -1)
+      (define-key term-raw-map (kbd "C-y") 'term-paste)
+    ))
 #+END_SRC
 
 - Kill term buffer when process exit
@@ -648,62 +671,76 @@ Currently just work on *nix systems.
      '(mode-line-inactive ((t (:background "#e8e8e8" :foreground "#212121" :box (:line-width 1 :color "#ECEFF1")))) t)
      )
     ;; Global change
-    (set-face-attribute 'linum nil :weight 'normal :height 1.0)
     (set-face-bold-p 'bold nil)
     )
 #+END_SRC
 
 ** Do something if in graphic mode
- #+BEGIN_SRC emacs-lisp
-   (when window-system
-     ;; Scroll-bar
-     (toggle-scroll-bar -1)
+#+BEGIN_SRC emacs-lisp
+  (defun aldo/__set-font ()
+    ;; set frame font
+    (let ((default-font (cond
+       ((find-font (font-spec :name "PragmataPro"))
+        "PragmataPro-11")
+       ((member "Source Code Pro" (font-family-list))
+        "Source Code Pro-11")
+       ((member "Inconsolata" (font-family-list))
+        "Inconsolata-11")
+       ((member "DejaVu Sans Mono" (font-family-list))
+        "DejaVu Sans Mono-11")
+       (t
+        "monospace-12")
+        )))
+        (set-default-font default-font)
+        (set-frame-font default-font t nil)
+        (add-to-list 'initial-frame-alist `(font . ,default-font))
+        (add-to-list 'default-frame-alist `(font . ,default-font))
+        ))
+#+END_SRC
+#+BEGIN_SRC emacs-lisp
+  (add-hook 'after-make-frame-functions
+            (lambda (frame)
+              ;; (message "New frame %S" frame)
+              (when (display-graphic-p frame)
+                (aldo/__set-font)
+                )
+              )
+            )
+#+END_SRC
+#+BEGIN_SRC emacs-lisp
+  (add-hook 'emacs-startup-hook
+            (lambda ()
+              ;; (set-frame-parameter nil 'fullscreen 'maximized)
+              ;; Set theme
+              (load-theme 'material-light t)
+              ;; (enable-theme 'material-light)
+              ;; Zoning after 240min, turn off with 'zone-leave-me-alone
+              (require 'zone)
+              (zone-when-idle (* 2400 60))
 
-     ;; Maximize initial frame
-     (add-to-list 'initial-frame-alist '(fullscreen . maximized))
-     (add-to-list 'default-frame-alist '(fullscreen . maximized))
+              ;; Maximize initial frame
+              (add-to-list 'initial-frame-alist '(fullscreen . maximized))
+              (add-to-list 'default-frame-alist '(fullscreen . maximized))
+              ;; or (toggle-frame-maximized))
 
-     ;; Set theme
-     (load-theme 'material-light t)
-     (enable-theme 'material-light)
-     (aldo/theme-hook)
-
-     ;; Hide tool-bar
-     (tool-bar-mode -1)
-     (redraw-display)
-
-     ;; Zoning after 50min, turn off with 'zone-leave-me-alone
-     (require 'zone)
-     (zone-when-idle (* 50 60))
-
-     ;; Font
-     (cond
-      ((member "PragmataPro" (font-family-list))
-       (set-frame-font "PragmataPro-11" nil t))
-      ((member "Source Code Pro" (font-family-list))
-       (set-frame-font "Source Code Pro-11" nil t))
-      ((member "Inconsolata" (font-family-list))
-       (set-frame-font "Inconsolata-11" nil t))
-      ((member "DejaVu Sans Mono" (font-family-list))
-       (set-frame-font "DejaVu Sans Mono-11" nil t)))
-     )
- #+END_SRC
-
+              (aldo/__set-font)
+              ))
+#+END_SRC
 ** Load theme hook
- #+BEGIN_SRC emacs-lisp
+#+BEGIN_SRC emacs-lisp
    (defvar after-load-theme-hook nil)
    (defadvice load-theme (after run-after-load-theme-hook activate)
      (run-hooks 'after-load-theme-hook))
    (add-hook 'after-load-theme-hook 'aldo/theme-hook)
- #+END_SRC
+#+END_SRC
 ** Starting server
- #+BEGIN_SRC emacs-lisp
+#+BEGIN_SRC emacs-lisp
    (add-hook 'after-init-hook
           (lambda ()
             (require 'server)
             (unless (server-running-p)
               (server-start))))
- #+END_SRC
+#+END_SRC
 ** MOTD
 #+BEGIN_SRC emacs-lisp
   (add-hook 'window-setup-hook

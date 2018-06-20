@@ -1,4 +1,5 @@
-.cache/
+.cache
+.config
 .emacs.d/session*
 .emacs.d/recentf
 .emacs.d/elpa/
@@ -7,4 +8,5 @@
 .emacs.d/network-security.data
 .emacs.d/history
 .emacs.d/games*
+.emacs.d/image-dired
 .local
