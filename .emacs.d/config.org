@@ -17,7 +17,7 @@
 
 - GC treshold
 #+BEGIN_SRC emacs-lisp
-  (setq gc-cons-threshold 100000000)
+  (setq gc-cons-threshold 10000000)
 #+END_SRC
 
 - Cursor type to bar
@@ -47,7 +47,9 @@
 
 - Line Number
 #+BEGIN_SRC emacs-lisp
-  (global-display-line-numbers-mode 1)
+  ;; (global-display-line-numbers-mode 1)
+  (add-hook 'prog-mode-hook #'display-line-numbers-mode)
+  (add-hook 'text-mode-hook #'display-line-numbers-mode)
   (setq display-line-number-type t)
 #+END_SRC
 
@@ -95,14 +97,24 @@ https://blog.codinghorror.com/death-to-the-space-infidels/
   (setq-default indent-tabs-mode nil)
 #+END_SRC
 
-- yes/no and y/n
+- Change yes/no to y/n
 #+BEGIN_SRC emacs-lisp
   (fset 'yes-or-no-p 'y-or-n-p)
 #+END_SRC
 
-- tramp
+- Change tramp default protocol to ssh
 #+BEGIN_SRC emacs-lisp
   (setq tramp-default-method "ssh")
+#+END_SRC
+
+- Always follow symbolic link
+#+BEGIN_SRC emacs-lisp
+  (setq vc-follow-symlinks t)
+#+END_SRC
+
+- Dots per inch resolution 400, eg viewing PDF file.
+#+BEGIN_SRC emacs-lisp
+  (setq doc-view-resolution 400)
 #+END_SRC
 ** Home folder hacks
 - User home folder
@@ -171,7 +183,7 @@ Currently just work on *nix systems.
             which-key-idle-delay 0.4)))
 #+END_SRC
 
-** Setting Helm
+** Helm
 #+BEGIN_SRC emacs-lisp
   (use-package helm
     :config
@@ -197,6 +209,12 @@ Currently just work on *nix systems.
     )
 #+END_SRC
 
+- Hide line-number
+#+BEGIN_SRC emacs-lisp
+  (add-hook 'helm-mode-hook (lambda () (display-line-numbers-mode -1)))
+#+END_SRC
+
+- Helm descbind
 #+BEGIN_SRC emacs-lisp
   (use-package helm-descbinds
     :config
@@ -225,11 +243,22 @@ Currently just work on *nix systems.
 #+BEGIN_SRC emacs-lisp
   (use-package multi-term
     :config
-    (setq multi-term-program "bash"
-          multi-term-buffer-name "shell* *"
-          multi-term-default-dir 'user-home-real-dir))
+    (progn
+      (setq multi-term-program "bash"
+            multi-term-buffer-name "shell* *"
+            multi-term-default-dir 'user-home-real-dir
+            multi-term-dedicated-select-after-open-p t
+            )
 #+END_SRC
 
+- Keybind for dedicated window
+#+BEGIN_SRC emacs-lisp
+  (global-set-key (kbd "<f1>") 'multi-term-dedicated-toggle)
+#+END_SRC
+
+#+BEGIN_SRC emacs-lisp
+  ))
+#+END_SRC
 ** Zoom-frm
 #+BEGIN_SRC emacs-lisp
   (use-package zoom-frm
@@ -241,16 +270,25 @@ Currently just work on *nix systems.
 #+END_SRC
 ** Magit
 #+BEGIN_SRC emacs-lisp
-  (use-package magit)
+  (use-package magit
+    :config
+    (progn
+      (setq magit-save-repository-buffers 'dontask
+            magit-auto-revert-mode t)
+      (global-set-key (kbd "C-x g") 'magit-status)
+      (global-set-key (kbd "C-x M-g") 'magit-dispatch-popup)
+      ))
 #+END_SRC
 ** Restart Emacs
 #+BEGIN_SRC emacs-lisp
   (use-package restart-emacs
-    :config (progn
-              (defalias 'r 'restart-emacs)
-              (when (file-exists-p (expand-file-name "start.sh" user-home-dir))
-                (defun restart-emacs--start-gui-using-sh (&optional args)
-                  (call-process (expand-file-name "start.sh" user-home-dir) nil 0 nil)))))
+    :config
+    (progn
+      (defalias 'r 'restart-emacs)
+      (when (file-exists-p (expand-file-name "start.sh" user-home-dir))
+        (defun restart-emacs--start-gui-using-sh (&optional args)
+          (call-process (expand-file-name "start.sh" user-home-dir) nil 0 nil)))
+      ))
 #+END_SRC
 
 ** Themes
@@ -266,7 +304,95 @@ Currently just work on *nix systems.
   (use-package telephone-line
     :config
     (progn
+      (setq telephone-line-lhs
+            (delete '(evil telephone-line-evil-tag-segment)
+                    telephone-line-lhs))
       (telephone-line-mode 1)))
+#+END_SRC
+** NeoTree
+- Neo tree
+#+BEGIN_SRC emacs-lisp
+  (use-package neotree
+    :config
+    (progn
+      ;;
+#+END_SRC
+
+- Keybind
+#+BEGIN_SRC emacs-lisp
+  (global-set-key (kbd "<f8>") 'neotree-toggle)
+#+END_SRC
+
+- Theme
+#+BEGIN_SRC emacs-lisp
+  (setq neo-theme (if (display-graphic-p) 'icons 'arrow))
+#+END_SRC
+
+#+BEGIN_SRC emacs-lisp
+  ))
+#+END_SRC
+** All-the-icons
+- all-the-icons
+#+BEGIN_SRC emacs-lisp
+  (use-package all-the-icons
+    :config
+    (progn
+      ;; (all-the-icons-install-fonts)
+      ))
+#+END_SRC
+
+- all-the-icons-dired
+#+BEGIN_SRC emacs-lisp
+  (use-package all-the-icons-dired
+    :config
+    (add-hook 'dired-mode-hook #'all-the-icons-dired-mode)
+    )
+#+END_SRC
+** Flycheck
+- Flycheck : On the fly syntax checking.
+#+BEGIN_SRC emacs-lisp
+  (use-package flycheck
+    :config
+    (progn
+      (defvaralias 'flycheck-python-pylint-executable 'python-shell-interpreter)
+      (defvaralias 'flycheck-python-flake8-executable 'python-shell-interpreter)
+      (global-flycheck-mode)
+    ))
+#+END_SRC
+** Projectile
+- Configuration
+#+BEGIN_SRC emacs-lisp
+  (use-package projectile
+    :config
+    (progn
+      (projectile-mode)
+      (setq projectile-enable-caching t
+            projectile-keymap-prefix (kbd "C-c p")
+            projectile-switch-project-action 'neotree-projectile-action)
+      (add-to-list 'projectile-globally-ignored-directories "node-modules")
+      (add-to-list 'projectile-globally-ignored-directories "__pycache__")
+      ))
+#+END_SRC
+
+- Helm integration
+#+BEGIN_SRC emacs-lisp
+  (use-package helm-projectile
+    :requires projectile
+    :init
+    (helm-projectile-on)
+    :config
+    (progn
+      (setq projectile-completion-system 'helm)
+      (setq projectile-switch-project-action 'helm-projectile)
+      ))
+#+END_SRC
+** Company
+- Company: Complete Anything, completion framework.
+#+BEGIN_SRC emacs-lisp
+  (use-package company
+    :config
+    (add-hook 'prog-mode-hook #'company-mode)
+    )
 #+END_SRC
 * Programming Language
 ** Python Mode
@@ -275,10 +401,13 @@ Currently just work on *nix systems.
     :mode ("\\.py\\'" . python-mode)
     :interpreter ("python3" . python-mode)
     :config
-    (setq py-python-command "python3")
-    (setq python-shell-interpreter "python3")
-    (setq python-indent-offset 4))
+    (progn
+      (setq py-python-command "python3"
+            python-shell-interpreter "python3"
+            python-indent-offset 4)
+      ))
 #+END_SRC
+
 - Goggle yapf
 #+BEGIN_SRC emacs-lisp
   (use-package yapfify
@@ -307,11 +436,6 @@ Currently just work on *nix systems.
 #+BEGIN_SRC emacs-lisp
   (setq org-directory (file-name-as-directory
                        (concat user-home-real-dir "org"))
-        org-agenda-span 14
-        org-agenda-files (file-expand-wildcards (concat org-directory "*.org"))
-        org-agenda-prefix-format "  %-17:c%?-12t% s"
-        org-agenda-skip-scheduled-if-done t
-        org-agenda-skip-deadline-if-done t
         org-reverse-note-order t
         org-export-with-section-numbers nil
         org-export-with-toc nil
@@ -325,6 +449,15 @@ Currently just work on *nix systems.
   (define-key global-map "\C-cc" 'org-capture)
 #+END_SRC
 
+- Org agenda
+=C-,= to cycle thru all org file in agenda folder (org-cycle-agenda-files)
+#+BEGIN_SRC emacs-lisp
+  (setq org-agenda-span 14
+        org-agenda-files (file-expand-wildcards (concat org-directory "*.org"))
+        org-agenda-prefix-format "  %-17:c%?-12t% s"
+        org-agenda-skip-scheduled-if-done t
+        org-agenda-skip-deadline-if-done t)
+#+END_SRC
 ** Org bullet
 #+BEGIN_SRC emacs-lisp
   (use-package org-bullets
@@ -343,7 +476,7 @@ Currently just work on *nix systems.
                               org-level-3
                               org-level-4
                               org-level-5))
-                (set-face-attribute face nil :weight 'semi-bold :height 1.0)))
+                (set-face-attribute face nil :weight 'normal :height 1.0)))
             )
 #+END_SRC
 
@@ -353,7 +486,6 @@ Currently just work on *nix systems.
 #+BEGIN_SRC emacs-lisp
   (use-package fish-mode)
 #+END_SRC
-
 * Eshell
 ** Configuration
 #+BEGIN_SRC emacs-lisp
@@ -425,7 +557,7 @@ Currently just work on *nix systems.
 
 ** Edit this file kbd
 #+BEGIN_SRC emacs-lisp
-  (global-set-key (kbd "<f6>") 'aldo/edit-config)
+  (global-set-key (kbd "<f6>") 'aldo/edit-config-file)
 #+END_SRC
 * Custom Functions
 ** Real =HOME= wrapper
@@ -437,16 +569,6 @@ Currently just work on *nix systems.
     (setenv "HOME" user-home-dir)
     )
 #+END_SRC
-** Load theme hook
-#+BEGIN_SRC emacs-lisp
-  (defvar after-load-theme-hook nil
-    "Hook run after a color theme is loaded using `load-theme'.")
-
-  (defadvice load-theme (after run-after-load-theme-hook activate)
-    "Run `after-load-theme-hook'."
-    (run-hooks 'after-load-theme-hook))
-#+END_SRC
-
 ** Fish in multi-term
 #+BEGIN_SRC emacs-lisp
   (defun aldo/fish-term ()
@@ -476,12 +598,24 @@ Currently just work on *nix systems.
 
 ** Edit this file
 #+BEGIN_SRC emacs-lisp
-  (defun aldo/edit-config ()
+  (defun aldo/edit-config-file ()
     (interactive)
     (find-file (expand-file-name "config.org" user-emacs-directory))
   )
 #+END_SRC
 
+** Compile (tangle) this file
+#+BEGIN_SRC emacs-lisp
+  (defun aldo/tangle-config-file ()
+      (interactive)
+    (let ((file (expand-file-name "config.org" user-emacs-directory)))
+          (org-babel-tangle-file
+           file
+           (concat (file-name-sans-extension file) ".el")
+           "emacs-lisp")
+          )
+     )
+#+END_SRC
 ** Open =org-directory=
 #+BEGIN_SRC emacs-lisp
   (defun aldo/dired-org-dir ()
@@ -625,6 +759,12 @@ Currently just work on *nix systems.
   (add-hook 'before-save-hook 'delete-trailing-whitespace)
 #+END_SRC
 
+- Dired-x
+#+BEGIN_SRC emacs-lisp
+  (add-hook 'dired-load-hook
+            (lambda () (load "dired-x")))
+#+END_SRC
+
 * Macro
 - kmacro-name-last-macro --> Mx insert-kbd-macro
 ** Duplicate line
@@ -634,50 +774,10 @@ Currently just work on *nix systems.
 (kmacro-exec-ring-item (quote ([5 67108896 1 134217847 5 return 25] 0 "%d")) arg)))
 #+END_SRC
 * X Window
-** Setting Theme Hook
-#+BEGIN_SRC emacs-lisp
-  (defun aldo/theme-hook ()
-    (ad-activate 'load-theme)
-    (custom-theme-set-faces
-     'material-light
-     '(font-lock-builtin-face ((t (:foreground "#626fc9" :weight normal))) t)
-     '(font-lock-comment-face ((t (:foreground "#7f7f7f"))) t)
-     '(font-lock-constant-face ((t (:foreground "#7653c1"))) t)
-     '(font-lock-doc-face ((t (:foreground "#1a93ae"))) t)
-     '(font-lock-function-name-face ((t (:foreground "#43279a"))) t)
-     '(font-lock-keyword-face ((t (:foreground "#6700b9" :weight normal))) t)
-     '(font-lock-preprocessor-face ((t (:foreground "#434343"))) t)
-     '(font-lock-string-face ((t (:foreground "#bc670f"))) t)
-     '(font-lock-type-face ((t (:foreground "#699d36" :slant normal))) t)
-     '(font-lock-variable-name-face ((t (:foreground "#7b8c4d"))) t)
-     '(font-lock-warning-face ((t (:foreground "#f93232" :underline t :slant italic :weight bold))) t)
-     ;; Org
-     '(org-level-1 ((t (:foreground "#3a81c3" :background nil))) t)
-     '(org-level-2 ((t (:foreground "#43279a" :background nil))) t)
-     '(org-level-3 ((t (:foreground "#626fc9" :background nil))) t)
-     '(org-code ((t (:background nil))) t)
-     '(org-block-background ((t (:background "#f4f4f4"))) t)
-     '(org-block-begin-line ((t (:background "#eaeaef" :foreground "#7e7e7e" :box nil :slant italic))) t)
-     '(org-block-end-line ((t (:background "#eaeaef" :foreground "#7e7e7e" :box nil :slant italic))) t)
-     ;; Helm
-     '(helm-ff-file ((t (:foreground "#4499ff" :background nil))) t)
-     '(helm-ff-dotted-directory ((t (:foreground "#121212" :background nil))) t)
-     '(helm-selection-line ((t (:background "#e8e8e8"))) t)
-     '(helm-source-header ((t (:background "#e8e8e8"))) t)
-     ;; Which Key
-     '(which-key-local-map-description-face ((t (:foreground "dark orange"))) t)
-     ;; Mode Line
-     '(mode-line ((t (:background "#e8e8e8" :foreground "#212121" :box (:line-width 1 :color "#ECEFF1")))) t)
-     '(mode-line-inactive ((t (:background "#e8e8e8" :foreground "#212121" :box (:line-width 1 :color "#ECEFF1")))) t)
-     )
-    ;; Global change
-    (set-face-bold-p 'bold nil)
-    )
-#+END_SRC
-
 ** Do something if in graphic mode
+- Set font function.
 #+BEGIN_SRC emacs-lisp
-  (defun aldo/__set-font ()
+(defun aldo/__set-font ()
     ;; set frame font
     (let ((default-font (cond
        ((find-font (font-spec :name "PragmataPro"))
@@ -697,6 +797,8 @@ Currently just work on *nix systems.
         (add-to-list 'default-frame-alist `(font . ,default-font))
         ))
 #+END_SRC
+
+- Hook when new frame created.
 #+BEGIN_SRC emacs-lisp
   (add-hook 'after-make-frame-functions
             (lambda (frame)
@@ -707,12 +809,14 @@ Currently just work on *nix systems.
               )
             )
 #+END_SRC
+
+- Startup hook.
 #+BEGIN_SRC emacs-lisp
   (add-hook 'emacs-startup-hook
             (lambda ()
               ;; (set-frame-parameter nil 'fullscreen 'maximized)
               ;; Set theme
-              (load-theme 'material-light t)
+              (load-theme 'aldo t)
               ;; (enable-theme 'material-light)
               ;; Zoning after 240min, turn off with 'zone-leave-me-alone
               (require 'zone)
@@ -725,13 +829,6 @@ Currently just work on *nix systems.
 
               (aldo/__set-font)
               ))
-#+END_SRC
-** Load theme hook
-#+BEGIN_SRC emacs-lisp
-   (defvar after-load-theme-hook nil)
-   (defadvice load-theme (after run-after-load-theme-hook activate)
-     (run-hooks 'after-load-theme-hook))
-   (add-hook 'after-load-theme-hook 'aldo/theme-hook)
 #+END_SRC
 ** Starting server
 #+BEGIN_SRC emacs-lisp
@@ -746,4 +843,8 @@ Currently just work on *nix systems.
   (add-hook 'window-setup-hook
           (lambda ()
             (message "This too shall pass")))
+#+END_SRC
+
+#+BEGIN_SRC emacs-lisp
+  ;;; config.el ends here
 #+END_SRC
