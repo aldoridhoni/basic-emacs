@@ -9,4 +9,6 @@
 .emacs.d/history
 .emacs.d/games*
 .emacs.d/image-dired
+.emacs.d/ido.last
+.emacs.d/projectile*
 .local
