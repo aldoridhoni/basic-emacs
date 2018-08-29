@@ -833,9 +833,9 @@ Currently just work on *nix systems.
 ** Starting server
 #+BEGIN_SRC emacs-lisp
    (add-hook 'after-init-hook
-          (lambda ()
+         (lambda ()
             (require 'server)
-            (unless (server-running-p)
+            (unless (server-running-p server-name)
               (server-start))))
 #+END_SRC
 ** MOTD
