@@ -12,3 +12,5 @@
 .emacs.d/ido.last
 .emacs.d/projectile*
 .local
+.emacs.d/tramp
+.emacs.d/auto-save-list/

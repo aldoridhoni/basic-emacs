@@ -37,7 +37,8 @@
 
 - Hide scroll bar
 #+BEGIN_SRC emacs-lisp
-  (set-scroll-bar-mode nil)
+  (when (fboundp 'set-scroll-bar-mode)
+    (set-scroll-bar-mode nil))
 #+END_SRC
 
 - Line highlighting
@@ -47,10 +48,12 @@
 
 - Line Number
 #+BEGIN_SRC emacs-lisp
-  ;; (global-display-line-numbers-mode 1)
-  (add-hook 'prog-mode-hook #'display-line-numbers-mode)
-  (add-hook 'text-mode-hook #'display-line-numbers-mode)
-  (setq display-line-number-type t)
+  (if (fboundp 'display-line-numbers-mode)
+      (progn
+        (add-hook 'prog-mode-hook #'display-line-numbers-mode)
+        (add-hook 'text-mode-hook #'display-line-numbers-mode)
+        (setq display-line-number-type t))
+    (global-linum-mode t))
 #+END_SRC
 
 - Auto refresh file form disk

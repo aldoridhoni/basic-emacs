@@ -18,8 +18,19 @@
     (defvar config-exwm--timer-lock nil
       "TIMER item. Use `cancel-timer' to remove.")
 
-    (defvar config-exwm--lock-screen-exec "slock"
+    (defvar config-exwm--lock-screen-exec '("slock")
       "Executable to lock screen in X.")
+
+    (defvar config-exwm--screenshot-exec '("scrot"
+                                           "%Y-%m-%d-%H:%M:%S_$wx$h.png"
+                                           "-e" "mv $f ~/Pictures/")
+      "Executable for taking screenshot.")
+
+    (defvar config-exwm--increase-volume-exec '("amixer" "set" "Master" "10%+")
+      "Increase volume using amixer")
+
+    (defvar config-exwm--decrease-volume-exec '("amixer" "set" "Master" "10%-")
+      "Decrease volume using amixer")
 
     (defun config-exwm--setup-randr ()
       "Auto setup randr"
@@ -35,15 +46,12 @@
     (defun config-exwm--lock-screen ()
       "Lock the screen using 'slock'"
       (interactive)
-      (start-process "" nil config-exwm--lock-screen-exec))
+      (apply #'start-process "" nil config-exwm--lock-screen-exec))
 
     (defun config-exwm--take-screenshot ()
       "Take screenshot using 'scrot'"
       (interactive)
-      (start-process "" nil
-                     "scrot"
-                     "%Y-%m-%d-%H:%M:%S_$wx$h.png"
-                     "-e" "mv $f ~/Pictures/"))
+      (apply #'start-process "" nil config-exwm--screenshot-exec))
 
     (defun config-exwm--set-lock-screen-timer (secs)
       "Set lock screen TIMER in seconds."
@@ -52,6 +60,24 @@
       (setq config-exwm--timer-lock nil)
       (setq config-exwm--timer-lock
             (run-with-idle-timer (* 1 secs) t 'config-exwm--lock-screen)))
+
+    (defun config-exwm--next-exmw-buffer ()
+      "Simple EXWM window switcher."
+      (interactive)
+      (next-buffer)
+      (while
+          (not (eq major-mode 'exwm-mode))
+        (next-buffer)))
+
+    (defun config-exwm--increase-volume ()
+      "Increasing volume."
+      (interactive)
+      (apply #'start-process "" nil config-exwm--increase-volume-exec))
+
+    (defun config-exwm--decrease-volume ()
+      "Decreasing volume."
+      (interactive)
+      (apply #'start-process "" nil config-exwm--decrease-volume-exec))
 
     ;; Set the initial workspace number.
     (setq exwm-workspace-number 2)
@@ -78,8 +104,12 @@
     (setq exwm-input-global-keys
           `(,`(,(kbd "s-r") . exwm-reset)
             ,`(,(kbd "s-w") . exwm-workspace-switch)
+            ,`(,(kbd "s-<tab>") . config-exwm--next-exmw-buffer)
             ,`(,(kbd "<XF86Forward>") . next-buffer)
             ,`(,(kbd "<XF86Back>") . previous-buffer)
+            ,`(,(kbd "<XF86AudioRaiseVolume>") . config-exwm--increase-volume)
+            ,`(,(kbd "<XF86AudioLowerVolume>") . config-exwm--decrease-volume)
+            ,`(,(kbd "<XF86Display>") . config-exwm--setup-randr)
             ,`(,(kbd "s-l") . config-exwm--lock-screen)
             ,`(,(kbd "s-&") .
                (lambda (command)
