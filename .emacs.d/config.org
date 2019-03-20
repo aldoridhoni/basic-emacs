@@ -32,7 +32,8 @@
 
 - Hide tool bar
 #+BEGIN_SRC emacs-lisp
-  (tool-bar-mode -1)
+  (when (fboundp 'tool-bar-mode)
+    (tool-bar-mode -1))
 #+END_SRC
 
 - Hide scroll bar
@@ -119,9 +120,37 @@ https://blog.codinghorror.com/death-to-the-space-infidels/
 #+BEGIN_SRC emacs-lisp
   (setq doc-view-resolution 400)
 #+END_SRC
+
+- Move backup directory to temporary folder.
+#+BEGIN_SRC emacs-lisp
+  (setq backup-directory-alist `((".*" . ,temporary-file-directory)))
+#+END_SRC
+
+- Move all auto-save file to single auto-save folder.
+#+BEGIN_SRC emacs-lisp
+    (let ((auto-save-folder (expand-file-name
+                             (file-name-as-directory
+                              (concat user-emacs-directory "auto-save")))))
+      (unless (file-exists-p auto-save-folder)
+        (make-directory auto-save-folder))
+      (setq auto-save-file-name-transforms `((".*" ,auto-save-folder t)))
+      (setq tramp-auto-save-directory auto-save-folder))
+#+END_SRC
+
+- Overwrite selected text
+#+BEGIN_SRC emacs-lisp
+  (delete-selection-mode t)
+#+END_SRC
+
+- Trust all custom theme
+#+BEGIN_SRC emacs-lisp
+  (setq custom-safe-themes t)
+#+END_SRC
+
 ** Home folder hacks
+There were two scenarios to think about. First emacs is started from out start.sh script. Second if dot emacs folder is symlink to basic emacs dot emacs folder.
 - User home folder
-Aside from =(getenv "HOME")=, we can use tilde.
+Use tilde to get user home dir.
 #+BEGIN_SRC emacs-lisp
   (defconst user-home-dir (file-name-as-directory
                    (expand-file-name "~")))
@@ -130,13 +159,11 @@ Aside from =(getenv "HOME")=, we can use tilde.
 #+END_SRC
 
 - Get real user home directory
-Currently just work on *nix systems.
 #+BEGIN_SRC emacs-lisp
   (defconst user-home-real-dir
     (if (getenv "REAL_HOME")
         (file-name-as-directory (getenv "REAL_HOME"))
-      (file-name-as-directory
-       (expand-file-name user-real-login-name "/home"))))
+      (getenv "HOME")))
 #+END_SRC
 
 #+BEGIN_SRC emacs-lisp
@@ -750,6 +777,11 @@ Currently just work on *nix systems.
     (xwidget-webkit-browse-url
      (concat "file://" buffer-file-truename)))
 #+END_SRC
+** Theme
+- Fix custom-theme-directory
+#+BEGIN_SRC emacs-lisp
+  (defconst custom-theme-directory (expand-file-name custom-theme-directory))
+#+END_SRC
 * Hooks
 ** Programming modes
 - Infer indentation
@@ -759,7 +791,11 @@ Currently just work on *nix systems.
 ** Other
 - Delete trailing whitespace
 #+BEGIN_SRC emacs-lisp
-  (add-hook 'before-save-hook 'delete-trailing-whitespace)
+  (defun _aldo/before-save-hook ()
+    (when (derived-mode-p 'prog-mode)
+      (delete-trailing-whitespace)))
+
+  (add-hook 'before-save-hook '_aldo/before-save-hook)
 #+END_SRC
 
 - Dired-x
