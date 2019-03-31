@@ -174,7 +174,6 @@ Use tilde to get user home dir.
 #+BEGIN_SRC emacs-lisp
 (require 'package)
 (add-to-list 'package-archives '("melpa" . "https://melpa.org/packages/") t)
-(add-to-list 'package-archives '("marmalade" . "https://marmalade-repo.org/packages/"))
 (add-to-list 'package-archives '("org" . "http://orgmode.org/elpa/") t)
 (package-initialize)
 #+END_SRC
@@ -778,9 +777,9 @@ Use tilde to get user home dir.
      (concat "file://" buffer-file-truename)))
 #+END_SRC
 ** Theme
-- Fix custom-theme-directory
+- Append lisp folder custom-theme-load-path so we can load aldo-theme
 #+BEGIN_SRC emacs-lisp
-  (defconst custom-theme-directory (expand-file-name custom-theme-directory))
+  (add-to-list 'custom-theme-load-path (concat user-emacs-directory "lisp"))
 #+END_SRC
 * Hooks
 ** Programming modes
@@ -816,25 +815,35 @@ Use tilde to get user home dir.
 ** Do something if in graphic mode
 - Set font function.
 #+BEGIN_SRC emacs-lisp
-(defun aldo/__set-font ()
-    ;; set frame font
-    (let ((default-font (cond
-       ((find-font (font-spec :name "PragmataPro"))
-        "PragmataPro-11")
-       ((member "Source Code Pro" (font-family-list))
-        "Source Code Pro-11")
-       ((member "Inconsolata" (font-family-list))
-        "Inconsolata-11")
-       ((member "DejaVu Sans Mono" (font-family-list))
-        "DejaVu Sans Mono-11")
-       (t
-        "monospace-12")
-        )))
-        (set-default-font default-font)
-        (set-frame-font default-font t nil)
-        (add-to-list 'initial-frame-alist `(font . ,default-font))
-        (add-to-list 'default-frame-alist `(font . ,default-font))
-        ))
+  (defun aldo/__set-font ()
+      ;; set frame font
+      (let ((default-font (cond
+         ((find-font (font-spec :name "PragmataPro"))
+          "PragmataPro-11")
+         ((member "Source Code Pro" (font-family-list))
+          "Source Code Pro-11")
+         ((member "Inconsolata" (font-family-list))
+          "Inconsolata-11")
+         ((member "DejaVu Sans Mono" (font-family-list))
+          "DejaVu Sans Mono-11")
+         (t
+          "monospace-12")
+          )))
+          (set-default-font default-font)
+          (set-frame-font default-font t nil)
+          (add-to-list 'initial-frame-alist `(font . ,default-font))
+          (add-to-list 'default-frame-alist `(font . ,default-font))
+          )
+      ;; load Fira Code Ligatures
+      (when
+          (member "Fira Code Symbol" (font-family-list))
+        (load "fira-code"))
+      )
+#+END_SRC
+
+- Load aldo-menu
+#+BEGIN_SRC emacs-lisp
+  (load "aldo-menu")
 #+END_SRC
 
 - Hook when new frame created.

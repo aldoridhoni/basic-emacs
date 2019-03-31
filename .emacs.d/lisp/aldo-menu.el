@@ -1,4 +1,4 @@
-;;; menu.el --- Create new menu entry
+;;; aldo-menu.el --- Create new menu entry
 ;;; Commentary:
 
 ;;; Code:
@@ -71,7 +71,8 @@
      ["CamelCase" subword-mode]
      ["snake_case" superword-mode])
     ("Other"
-     ["Butterfly" butterfly t])))
+     ["Butterfly" butterfly t]
+     ["Birthday" animate-birthday-present])))
 
 ;; sudo edit
 (define-key
@@ -82,5 +83,5 @@
 ;;; To remove this menu
 ;;; (global-unset-key [menu-bar Basic\ Config])
 ;;; (global-unset-key [menu-bar Navigation])
-(provide 'menu)
-;;; menu.el ends here
+(provide 'aldo-menu)
+;;; aldo-menu.el ends here
