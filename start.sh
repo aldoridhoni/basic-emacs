@@ -3,4 +3,4 @@
 
 dir=$(CDPATH= cd -- "$(dirname -- "$0")" && pwd -P)
 emacs_bin=$(which emacs)
-exec env HOME="$dir" REAL_HOME="$HOME" $emacs_bin --name Basic --title Basic --maximized "$@"
+exec env HOME="$dir" REAL_HOME="$HOME" $emacs_bin --maximized "$@"

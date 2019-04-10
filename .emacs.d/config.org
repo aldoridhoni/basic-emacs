@@ -147,6 +147,14 @@ https://blog.codinghorror.com/death-to-the-space-infidels/
   (setq custom-safe-themes t)
 #+END_SRC
 
+- Set frame-title. https://www.emacswiki.org/emacs/FrameTitle
+#+BEGIN_SRC emacs-lisp
+  (setq frame-title-format
+        '("" "Basic Emacs " emacs-version " - " 
+         (buffer-file-name "%f"
+                            (dired-directory dired-directory "%b"))))
+#+END_SRC
+
 ** Home folder hacks
 There were two scenarios to think about. First emacs is started from out start.sh script. Second if dot emacs folder is symlink to basic emacs dot emacs folder.
 - User home folder
@@ -437,7 +445,7 @@ Use tilde to get user home dir.
       ))
 #+END_SRC
 
-- Goggle yapf
+- Goggle yapf fix syntax formatting.
 #+BEGIN_SRC emacs-lisp
   (use-package yapfify
     :init
@@ -454,6 +462,12 @@ Use tilde to get user home dir.
 ** Web Mode
 #+BEGIN_SRC emacs-lisp
   (use-package web-mode
+    :mode "\\.html\\'")
+#+END_SRC
+** Emmet
+- Emmet expand css like syntax to html, Eg. div.class -> <div class="class"></div>.
+#+BEGIN_SRC emacs-lisp
+  (use-package emmet-mode
     :mode "\\.html\\'")
 #+END_SRC
 ** Markdown Mode
