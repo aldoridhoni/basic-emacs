@@ -411,7 +411,7 @@ Use tilde to get user home dir.
       ))
 #+END_SRC
 
-- Helm integration
+- Helm integration, =C-c p h=
 #+BEGIN_SRC emacs-lisp
   (use-package helm-projectile
     :requires projectile
@@ -450,6 +450,19 @@ Use tilde to get user home dir.
   (use-package yapfify
     :init
     (add-hook 'python-mode-hook 'yapf-mode))
+#+END_SRC
+
+- Add keybinding for F12 key. Mainly for simple python scripts.
+#+BEGIN_SRC emacs-lisp
+  (with-eval-after-load "python"
+      (define-key python-mode-map
+        (kbd "<f12>")
+        (lambda ()
+          (interactive)
+          (run-python)
+          (python-shell-send-buffer)
+          (python-shell-switch-to-shell)
+          )))
 #+END_SRC
 ** Rust Mode
 #+BEGIN_SRC emacs-lisp
@@ -602,6 +615,17 @@ Use tilde to get user home dir.
 #+BEGIN_SRC emacs-lisp
   (global-set-key (kbd "<f6>") 'aldo/edit-config-file)
 #+END_SRC
+
+** Kill current buffer
+- Kill current buffer F9.
+#+BEGIN_SRC emacs-lisp
+  (global-set-key (kbd "<f9>") 'kill-this-buffer)
+#+END_SRC
+
+** Other buffer
+#+BEGIN_SRC emacs-lisp
+  (global-set-key (kbd "<f5>") 'mode-line-other-buffer)
+#+END_SRC
 * Custom Functions
 ** Real =HOME= wrapper
 #+BEGIN_SRC emacs-lisp
@@ -666,10 +690,11 @@ Use tilde to get user home dir.
     (dired org-directory))
 #+END_SRC
 ** Insert new line before
+- Keybind at C-S-o. Kinda inverse of open-line C-o. Can be called with universal argument C-u.
 #+BEGIN_SRC emacs-lisp
   (defun aldo/insert-line-before (times)
     (interactive "p")
-    (save-recursion
+    (save-excursion
      (move-beginning-of-line 1)
      (newline times)))
 #+END_SRC
@@ -752,10 +777,12 @@ Use tilde to get user home dir.
     (_aldo/change-buffer 'previous-buffer))
 #+END_SRC
 
-- Remap command
+- Remap command and set keybind following setup-keys.el with [pause] / [break] key
 #+BEGIN_SRC emacs-lisp
   (global-set-key [remap next-buffer] '_aldo/next-buffer)
   (global-set-key [remap previous-buffer] '_aldo/previous-buffer)
+  (global-set-key [M-pause] 'next-buffer)
+  (global-set-key [C-pause] 'previous-buffer)
 #+END_SRC
 
 - Add list of useful buffers
