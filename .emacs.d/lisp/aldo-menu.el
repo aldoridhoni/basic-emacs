@@ -4,7 +4,7 @@
 ;;; Code:
 ;;; Menu pane baru
 
-(easy-menu-define words-menu global-map
+(easy-menu-define nav-menu nil
   "Menu for word navigation commands."
   '("Navigation"
     ("Character"
@@ -41,7 +41,7 @@
      ["End" end-of-buffer])))
 
 ;; Keyboard macro
-(easy-menu-define macro-menu global-map
+(easy-menu-define macro-menu nil
   "Macro"
   '("Macro"
     ["Record" kmacro-start-macro]
@@ -51,7 +51,7 @@
     ["Name last" kmacro-name-last-macro]
     ["Keybind last" kmacro-bind-to-key]))
 
-(easy-menu-define basic-menu global-map
+(easy-menu-define basic-menu nil
   "Menu for my configuration."
   '("Basic Config"
     ["Config File" aldo/edit-config-file t]
@@ -73,6 +73,19 @@
     ("Other"
      ["Butterfly" butterfly t]
      ["Birthday" animate-birthday-present])))
+
+;; Put to menu-bar
+(define-key-after (lookup-key global-map [menu-bar])
+  [basic-menu-entry]
+  (cons "Basic-Config" basic-menu) 'tools)
+
+(define-key-after (lookup-key global-map [menu-bar])
+  [nav-menu-entry]
+  (cons "Navigation" nav-menu) 'tools)
+
+(define-key-after (lookup-key global-map [menu-bar])
+  [macro-menu-entry]
+  (cons "Macro" macro-menu) 'tools)
 
 ;; sudo edit
 (define-key
