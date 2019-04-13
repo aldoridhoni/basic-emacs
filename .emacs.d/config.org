@@ -149,10 +149,12 @@ https://blog.codinghorror.com/death-to-the-space-infidels/
 
 - Set frame-title. https://www.emacswiki.org/emacs/FrameTitle
 #+BEGIN_SRC emacs-lisp
-  (setq frame-title-format
-        '("" "Basic Emacs " emacs-version " - " 
-         (buffer-file-name "%f"
-                            (dired-directory dired-directory "%b"))))
+    (setq frame-title-format
+          '(""
+           (buffer-file-name "%f"
+                             (dired-directory dired-directory "%b"))
+            " - " "Basic Emacs " emacs-version
+           ))
 #+END_SRC
 
 ** Home folder hacks
