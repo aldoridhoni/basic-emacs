@@ -824,6 +824,40 @@ Use tilde to get user home dir.
 #+BEGIN_SRC emacs-lisp
   (add-to-list 'custom-theme-load-path (concat user-emacs-directory "lisp"))
 #+END_SRC
+
+- Dark theme aka monokai
+#+BEGIN_SRC emacs-lisp
+  (defun aldo/dark-theme ()
+    "Set theme to monokai."
+    (interactive)
+    (if enable-dark-theme (message "Already loaded"))
+    (when (not enable-dark-theme)
+      (setq enable-dark-theme t)
+      (dolist (theme custom-enabled-themes)
+        (disable-theme theme))
+      (telephone-line-mode 0)
+      (load-theme 'monokai t)))
+#+END_SRC
+
+- Light theme
+#+BEGIN_SRC emacs-lisp
+  (defun aldo/light-theme ()
+    "Set theme to aldo-theme."
+    (interactive)
+    (when 'enable-dark-theme
+      (setq enable-dark-theme nil)
+      (dolist (theme custom-enabled-themes)
+          (disable-theme theme))
+        (telephone-line-mode 0)
+        (load-theme 'aldo t)))
+#+END_SRC
+
+- Enable dark-theme based on time of launch at 6pm.
+#+BEGIN_SRC emacs-lisp
+  (defun aldo/__night-theme ()
+    (when (> (string-to-number (format-time-string "%H")) 18)
+      (aldo/dark-theme)))
+#+END_SRC
 * Hooks
 ** Programming modes
 - Infer indentation
@@ -918,7 +952,11 @@ Use tilde to get user home dir.
               (add-to-list 'default-frame-alist '(fullscreen . maximized))
               ;; or (toggle-frame-maximized))
 
+              ;;macOS
+              (when (fboundp 'cocoa) (toggle-frame-fullscreen))
+
               (aldo/__set-font)
+              (aldo/__night-theme)
               ))
 #+END_SRC
 ** Starting server
