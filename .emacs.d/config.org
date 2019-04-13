@@ -398,7 +398,7 @@ Use tilde to get user home dir.
     (progn
       (defvaralias 'flycheck-python-pylint-executable 'python-shell-interpreter)
       (defvaralias 'flycheck-python-flake8-executable 'python-shell-interpreter)
-      (global-flycheck-mode)
+      (add-hook 'prog-mode-hook #'flycheck-mode)
     ))
 #+END_SRC
 ** Projectile
@@ -541,6 +541,14 @@ Use tilde to get user home dir.
             )
 #+END_SRC
 
+** Org Src
+- Remove flycheck in org-src-mode for emacs-lisp-mode
+#+BEGIN_SRC emacs-lisp
+  ;; This hook run before major-mode hook
+  ;; (add-hook 'org-src-mode-hook (lambda () (flycheck-mode -1)))
+
+  (add-hook 'emacs-lisp-mode-hook (lambda () (flycheck-mode -1)))
+#+END_SRC
 * Other Modes
 ** Fish
 - Fish shell
@@ -674,6 +682,12 @@ Use tilde to get user home dir.
     (interactive)
     (find-file (expand-file-name "config.org" user-emacs-directory))
   )
+#+END_SRC
+
+#+BEGIN_SRC emacs-lisp
+  (defun aldo/__tangle-config-file ()
+    (org-babel-tangle-file
+     (expand-file-name "config.org" user-emacs-directory)))
 #+END_SRC
 
 ** Compile (tangle) this file
@@ -833,8 +847,8 @@ Use tilde to get user home dir.
   (defun aldo/dark-theme ()
     "Set theme to monokai."
     (interactive)
-    (if enable-dark-theme
-        (message "Already loaded")
+    (if (bound-and-true-p enable-dark-theme)
+        (user-error "Already loaded")
       (progn
         (message "Switching to dark theme")
         (setq enable-dark-theme t)
@@ -964,7 +978,7 @@ Use tilde to get user home dir.
 
               (aldo/__set-font)
               (aldo/__night-theme)
-              )
+              ))
 #+END_SRC
 ** Starting server
 #+BEGIN_SRC emacs-lisp
