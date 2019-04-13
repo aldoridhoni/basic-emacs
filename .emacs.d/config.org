@@ -953,7 +953,7 @@ Use tilde to get user home dir.
               ;; or (toggle-frame-maximized))
 
               ;;macOS
-              (when (fboundp 'cocoa) (toggle-frame-fullscreen))
+              (when (featurep 'cocoa) (toggle-frame-fullscreen))
 
               (aldo/__set-font)
               (aldo/__night-theme)
