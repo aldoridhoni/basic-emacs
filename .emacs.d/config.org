@@ -170,10 +170,13 @@ Use tilde to get user home dir.
 
 - Get real user home directory
 #+BEGIN_SRC emacs-lisp
-  (defconst user-home-real-dir
-    (if (getenv "REAL_HOME")
-        (file-name-as-directory (getenv "REAL_HOME"))
-      (getenv "HOME")))
+   (defconst user-home-real-dir
+     (cond
+      ((getenv "REAL_HOME")
+       (file-name-as-directory (getenv "REAL_HOME")))
+      ((getenv "HOME")
+       (file-name-as-directory (getenv "HOME")))
+      (t user-home-dir)))
 #+END_SRC
 
 #+BEGIN_SRC emacs-lisp
