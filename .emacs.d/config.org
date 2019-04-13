@@ -830,13 +830,15 @@ Use tilde to get user home dir.
   (defun aldo/dark-theme ()
     "Set theme to monokai."
     (interactive)
-    (if enable-dark-theme (message "Already loaded"))
-    (when (not enable-dark-theme)
-      (setq enable-dark-theme t)
-      (dolist (theme custom-enabled-themes)
-        (disable-theme theme))
-      (telephone-line-mode 0)
-      (load-theme 'monokai t)))
+    (if enable-dark-theme
+        (message "Already loaded")
+      (progn
+        (message "Switching to dark theme")
+        (setq enable-dark-theme t)
+        (dolist (theme custom-enabled-themes)
+          (disable-theme theme))
+        (load-theme 'monokai t)
+        (telephone-line-mode -1))))
 #+END_SRC
 
 - Light theme
@@ -844,11 +846,12 @@ Use tilde to get user home dir.
   (defun aldo/light-theme ()
     "Set theme to aldo-theme."
     (interactive)
-    (when 'enable-dark-theme
+    (when enable-dark-theme
+      (message "Switching to light theme")
       (setq enable-dark-theme nil)
       (dolist (theme custom-enabled-themes)
           (disable-theme theme))
-        (telephone-line-mode 0)
+        (telephone-line-mode t)
         (load-theme 'aldo t)))
 #+END_SRC
 
@@ -941,6 +944,7 @@ Use tilde to get user home dir.
             (lambda ()
               ;; (set-frame-parameter nil 'fullscreen 'maximized)
               ;; Set theme
+              (setq enable-dark-theme nil)
               (load-theme 'aldo t)
               ;; (enable-theme 'material-light)
               ;; Zoning after 240min, turn off with 'zone-leave-me-alone
@@ -957,7 +961,7 @@ Use tilde to get user home dir.
 
               (aldo/__set-font)
               (aldo/__night-theme)
-              ))
+              )
 #+END_SRC
 ** Starting server
 #+BEGIN_SRC emacs-lisp
