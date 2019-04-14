@@ -8,11 +8,21 @@
 #+BEGIN_SRC emacs-lisp
   (setq inhibit-splash-screen t
         require-final-newline t
-        make-backup-files nil
         initial-scratch-message nil
         delete-trailing-lines nil
         visible-bell t
         server-name "basic")
+#+END_SRC
+
+- Disable backup
+#+BEGIN_SRC emacs-lisp
+  (setq backup-inhibited t
+        make-backup-files nil)
+#+END_SRC
+
+- Move backup directory to temporary folder.
+#+BEGIN_SRC emacs-lisp
+  (setq backup-directory-alist `(("." . ,temporary-file-directory)))
 #+END_SRC
 
 - GC treshold
@@ -119,11 +129,6 @@ https://blog.codinghorror.com/death-to-the-space-infidels/
 - Dots per inch resolution 400, eg viewing PDF file.
 #+BEGIN_SRC emacs-lisp
   (setq doc-view-resolution 400)
-#+END_SRC
-
-- Move backup directory to temporary folder.
-#+BEGIN_SRC emacs-lisp
-  (setq backup-directory-alist `((".*" . ,temporary-file-directory)))
 #+END_SRC
 
 - Move all auto-save file to single auto-save folder.
