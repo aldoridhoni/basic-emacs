@@ -908,6 +908,34 @@ Use tilde to get user home dir.
    (lambda (&optional arg) "Keyboard macro." (interactive "p")
 (kmacro-exec-ring-item (quote ([5 67108896 1 134217847 5 return 25] 0 "%d")) arg)))
 #+END_SRC
+* Platform Specific
+** FreeBDS
+- Shell default to sh
+#+BEGIN_SRC emacs-lisp
+  (setq multi-term-program "sh")
+#+END_SRC
+** macOS aka OSX aka Mac OS X aka darwin
+- Command key as Meta
+#+BEGIN_SRC emacs-lisp
+  (when (eq system-type 'darwin)
+    (setq mac-command-modifier 'meta)
+    (setq mac-option-modifier nil)
+#+END_SRC
+
+- Multi-term default to ZSH
+#+BEGIN_SRC emacs-lisp
+  (setq multi-term-program "zsh")
+#+END_SRC
+
+#+BEGIN_SRC emacs-lisp
+  )
+#+END_SRC
+** MS Windows
+- HOME default to $APPDATA, change to $USEPROFILE or $HOMEPATH
+#+BEGIN_SRC emacs-lisp
+  (setq user-home-real-dir (file-name-as-directory
+                            (getenv "USERPROFILE")))
+#+END_SRC
 * X Window
 ** Do something if in graphic mode
 - Set font function.
