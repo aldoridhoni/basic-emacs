@@ -847,41 +847,79 @@ Use tilde to get user home dir.
   (add-to-list 'custom-theme-load-path (concat user-emacs-directory "lisp"))
 #+END_SRC
 
-- Dark theme aka monokai
+- Settings
 #+BEGIN_SRC emacs-lisp
-  (defun aldo/dark-theme ()
-    "Set theme to monokai."
-    (interactive)
-    (if (bound-and-true-p enable-dark-theme)
-        (user-error "Already loaded")
-      (progn
-        (message "Switching to dark theme")
-        (setq enable-dark-theme t)
-        (dolist (theme custom-enabled-themes)
-          (disable-theme theme))
-        (load-theme 'monokai t)
-        (telephone-line-mode -1))))
+  (defcustom dark-theme-enable nil
+    "Set non nil turn on dark-theme at startup")
+
+  (defcustom aldo/dark-theme 'monokai nil)
+
+  (defcustom aldo/light-theme 'aldo nil)
+#+END_SRC
+
+- Dark theme
+#+BEGIN_SRC emacs-lisp
+    (defun aldo/dark-theme ()
+      "Set theme to value of `aldo/dark-theme'."
+      (interactive)
+      (let ((enabled
+             (if (get 'aldo/dark-theme 'enabled)
+                 (get 'aldo/dark-theme 'enabled)
+               nil)
+             ))
+        (if (not enabled)
+            (progn
+              (message "Switching to dark theme")
+
+              (put 'aldo/dark-theme 'enabled t)
+              (put 'aldo/light-theme 'enabled nil)
+
+              (dolist (theme custom-enabled-themes)
+                (disable-theme theme))
+
+              (telephone-line-mode -1)
+
+              (load-theme aldo/dark-theme t)
+
+              (aldo/__set-font))
+          (user-error "Already in dark theme"))))
 #+END_SRC
 
 - Light theme
 #+BEGIN_SRC emacs-lisp
   (defun aldo/light-theme ()
-    "Set theme to aldo-theme."
+    "Set theme to value of `aldo/light-theme'."
     (interactive)
-    (when enable-dark-theme
-      (message "Switching to light theme")
-      (setq enable-dark-theme nil)
-      (dolist (theme custom-enabled-themes)
-          (disable-theme theme))
-        (telephone-line-mode t)
-        (load-theme 'aldo t)))
+    (let ((enabled
+           (if (get 'aldo/light-theme 'enabled)
+               (get 'aldo/light-theme 'enabled)
+             nil)
+           ))
+      (if (not enabled)
+          (progn
+            (message "Switching to light theme")
+
+            (put 'aldo/light-theme 'enabled t)
+            (put 'aldo/dark-theme 'enabled nil)
+
+            (dolist (theme custom-enabled-themes)
+              (disable-theme theme))
+
+            (telephone-line-mode t)
+
+            (load-theme aldo/light-theme t)
+
+            (aldo/__set-font))
+        (user-error "Already in light theme"))))
 #+END_SRC
 
 - Enable dark-theme based on time of launch at 6pm.
 #+BEGIN_SRC emacs-lisp
-  (defun aldo/__night-theme ()
-    (when (> (string-to-number (format-time-string "%H")) 18)
-      (aldo/dark-theme)))
+  (defun aldo/__time-based-theme ()
+    (let ((now (string-to-number (format-time-string "%H"))))
+      (if (or (>= now 18) (<= now 6))
+           (aldo/dark-theme)
+           (aldo/light-theme))))
 #+END_SRC
 * Hooks
 ** Programming modes
@@ -980,7 +1018,7 @@ Use tilde to get user home dir.
 
 - Hook when new frame created.
 #+BEGIN_SRC emacs-lisp
-  (add-hook 'after-make-frame-functions
+(add-hook 'after-make-frame-functions
             (lambda (frame)
               ;; (message "New frame %S" frame)
               (when (display-graphic-p frame)
@@ -994,25 +1032,19 @@ Use tilde to get user home dir.
 #+BEGIN_SRC emacs-lisp
   (add-hook 'emacs-startup-hook
             (lambda ()
-              ;; (set-frame-parameter nil 'fullscreen 'maximized)
-              ;; Set theme
-              (setq enable-dark-theme nil)
-              (load-theme 'aldo t)
-              ;; (enable-theme 'material-light)
               ;; Zoning after 240min, turn off with 'zone-leave-me-alone
               (require 'zone)
               (zone-when-idle (* 2400 60))
 
               ;; Maximize initial frame
-              (add-to-list 'initial-frame-alist '(fullscreen . maximized))
-              (add-to-list 'default-frame-alist '(fullscreen . maximized))
-              ;; or (toggle-frame-maximized))
+              ;; (add-to-list 'initial-frame-alist '(fullscreen . maximized))
+              ;; (add-to-list 'default-frame-alist '(fullscreen . maximized))
+              (toggle-frame-maximized)
 
               ;;macOS
               (when (featurep 'cocoa) (toggle-frame-fullscreen))
 
-              (aldo/__set-font)
-              (aldo/__night-theme)
+              (aldo/__time-based-theme)
               ))
 #+END_SRC
 ** Starting server
