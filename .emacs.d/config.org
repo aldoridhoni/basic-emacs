@@ -909,10 +909,11 @@ Use tilde to get user home dir.
 (kmacro-exec-ring-item (quote ([5 67108896 1 134217847 5 return 25] 0 "%d")) arg)))
 #+END_SRC
 * Platform Specific
-** FreeBDS
-- Shell default to sh
+** FreeBSD
+- Multi-term default to sh
 #+BEGIN_SRC emacs-lisp
-  (setq multi-term-program "sh")
+  (when (eq system-type 'berkeley-unix)
+    (setq multi-term-program "sh"))
 #+END_SRC
 ** macOS aka OSX aka Mac OS X aka darwin
 - Command key as Meta
@@ -933,8 +934,9 @@ Use tilde to get user home dir.
 ** MS Windows
 - HOME default to $APPDATA, change to $USEPROFILE or $HOMEPATH
 #+BEGIN_SRC emacs-lisp
-  (setq user-home-real-dir (file-name-as-directory
-                            (getenv "USERPROFILE")))
+  (when (eq system-type 'windows-nt)
+    (setq user-home-real-dir (file-name-as-directory
+                            (getenv "USERPROFILE"))))
 #+END_SRC
 * X Window
 ** Do something if in graphic mode
