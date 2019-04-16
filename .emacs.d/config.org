@@ -859,30 +859,27 @@ Use tilde to get user home dir.
 
 - Dark theme
 #+BEGIN_SRC emacs-lisp
-    (defun aldo/dark-theme ()
-      "Set theme to value of `aldo/dark-theme'."
-      (interactive)
-      (let ((enabled
-             (if (get 'aldo/dark-theme 'enabled)
-                 (get 'aldo/dark-theme 'enabled)
-               nil)
-             ))
-        (if (not enabled)
-            (progn
-              (message "Switching to dark theme")
+  (defun aldo/dark-theme ()
+    "Set theme to value of `aldo/dark-theme'."
+    (interactive)
+    (let ((enabled
+           (if (get 'aldo/dark-theme 'enabled)
+               (get 'aldo/dark-theme 'enabled)
+             nil)
+           ))
+      (if (not enabled)
+          (progn
+            (message "Switching to dark theme")
 
-              (put 'aldo/dark-theme 'enabled t)
-              (put 'aldo/light-theme 'enabled nil)
+            (put 'aldo/dark-theme 'enabled t)
+            (put 'aldo/light-theme 'enabled nil)
 
-              (dolist (theme custom-enabled-themes)
-                (disable-theme theme))
+            (dolist (theme custom-enabled-themes)
+              (disable-theme theme))
 
-              (telephone-line-mode -1)
+            (load-theme aldo/dark-theme t))
 
-              (load-theme aldo/dark-theme t)
-
-              (aldo/__set-font))
-          (user-error "Already in dark theme"))))
+        (user-error "Already in dark theme"))))
 #+END_SRC
 
 - Light theme
@@ -905,11 +902,8 @@ Use tilde to get user home dir.
             (dolist (theme custom-enabled-themes)
               (disable-theme theme))
 
-            (telephone-line-mode t)
+            (load-theme aldo/light-theme t))
 
-            (load-theme aldo/light-theme t)
-
-            (aldo/__set-font))
         (user-error "Already in light theme"))))
 #+END_SRC
 
@@ -986,29 +980,32 @@ Use tilde to get user home dir.
 - Set font function.
 #+BEGIN_SRC emacs-lisp
   (defun aldo/__set-font ()
-      ;; set frame font
-      (let ((default-font (cond
-         ((find-font (font-spec :name "PragmataPro"))
-          "PragmataPro-11")
-         ((member "Source Code Pro" (font-family-list))
-          "Source Code Pro-11")
-         ((member "Inconsolata" (font-family-list))
-          "Inconsolata-11")
-         ((member "DejaVu Sans Mono" (font-family-list))
-          "DejaVu Sans Mono-11")
-         (t
-          "monospace-12")
-          )))
-          (set-default-font default-font)
-          (set-frame-font default-font t nil)
-          (add-to-list 'initial-frame-alist `(font . ,default-font))
-          (add-to-list 'default-frame-alist `(font . ,default-font))
-          )
-      ;; load Fira Code Ligatures
-      (when
-          (member "Fira Code Symbol" (font-family-list))
-        (load "fira-code"))
-      )
+    ;; load Fira Code Ligatures
+    (when
+        (member "Fira Code Symbol" (font-family-list))
+      (load "fira-code")
+      (message "Loading Fira Code Ligatures"))
+
+    ;; set frame font
+    (let ((default-font
+            (cond
+             ((find-font (font-spec :name "PragmataPro"))
+              "PragmataPro-11")
+             ((member "Source Code Pro" (font-family-list))
+              "Source Code Pro-11")
+             ((member "Inconsolata" (font-family-list))
+              "Inconsolata-11")
+             ((member "DejaVu Sans Mono" (font-family-list))
+              "DejaVu Sans Mono-11")
+             ((member "Menlo" (font-family-list))
+              "Menlo-11")
+             (t
+              "monospace-12")
+             )))
+      (set-frame-font default-font t t)
+      (add-to-list 'initial-frame-alist `(font . ,default-font))
+      (add-to-list 'default-frame-alist `(font . ,default-font))
+      (message "Setting font to %s" default-font)))
 #+END_SRC
 
 - Load aldo-menu
