@@ -1,13 +1,14 @@
 ;;; aldo-theme.el --- Personal theme
 (deftheme aldo
 ;;; Commentary:
-  "Created 2018-06-23. Based of Material Light & Espresso color")
+  "Created 2018-06-23. Based of Material Light & Espresso color
+   Updated 2019-04-16: Change few faces based of BBEdit light color")
 ;;; Code:
 (custom-theme-set-faces
  'aldo
- '(default ((t (:family "PragmataPro" :foundry "fsdf" :width normal :height 113 :weight normal
-                        :slant normal :underline nil :overline nil :strike-through nil :box nil
-                        :inverse-video nil :foreground "#212121" :background "#FAFAFA" :stipple nil :inherit nil))))
+ '(default ((t (:foundry "fsdf" :width normal :weight normal :slant normal :underline nil
+                         :overline nil :strike-through nil :box nil :inverse-video nil :foreground "#131313"
+                         :background "#F7F7F7" :stipple nil :inherit nil))))
  '(cursor ((t (:background "#FF5722"))))
  '(fixed-pitch ((t (:family "Monospace"))))
  '(variable-pitch ((((type w32)) (:foundry "outline" :family "Arial")) (t (:family "Sans Serif"))))
@@ -25,18 +26,19 @@
  '(font-lock-builtin-face ((t (:weight normal :foreground "#626fc9"))))
  '(font-lock-comment-delimiter-face ((t (:foreground "#607d8b"))))
  '(font-lock-comment-face ((t (:foreground "#7f7f7f"))))
- '(font-lock-constant-face ((t (:foreground "#7653c1"))))
- '(font-lock-doc-face ((t (:foreground "#1a93ae"))))
+ '(font-lock-constant-face ((t (:foreground "#007681"))))
+ '(font-lock-doc-face ((t (:foreground "#c73a81"))))
  '(font-lock-function-name-face ((t (:foreground "#43279a"))))
- '(font-lock-keyword-face ((t (:weight normal :foreground "#6700b9"))))
+ '(font-lock-keyword-face ((t (:weight normal :foreground "#374ef4"))))
  '(font-lock-negation-char-face ((t (:foreground "#2196f3"))))
- '(font-lock-preprocessor-face ((t (:foreground "#434343"))))
+ '(font-lock-preprocessor-face ((t (:foreground "#2637af"))))
  '(font-lock-regexp-grouping-backslash ((t (:foreground "#FFA000"))))
  '(font-lock-regexp-grouping-construct ((t (:foreground "#4527A0"))))
- '(font-lock-string-face ((t (:foreground "#bc670f"))))
+ '(font-lock-string-face ((t (:foreground "#bd166a"))))
  '(font-lock-type-face ((t (:slant normal :foreground "#699d36"))))
- '(font-lock-variable-name-face ((t (:foreground "#7b8c4d"))))
- '(font-lock-warning-face ((t (:weight bold :slant italic :underline (:color foreground-color :style line) :foreground "#f93232"))))
+ '(font-lock-variable-name-face ((t (:foreground "#187818"))))
+ '(font-lock-warning-face ((t (:weight bold :slant italic :underline
+                                       (:color foreground-color :style line) :foreground "#f93232"))))
  ;; Org
  '(org-level-1 ((t (:weight normal :foreground "#3a81c3" :background nil))))
  '(org-level-2 ((t (:weight normal :foreground "#43279a" :background nil))))
@@ -70,6 +72,8 @@
  ;; Telephone Line
  '(telephone-line-accent-active ((t (:foreground "white" :background "grey11"))))
  '(telephone-line-accent-inactive ((t (:foreground "white" :background "grey33"))))
+ '(telephone-line-projectile ((t :foreground "midnightblue" :bold t)))
+ ;; Other
  '(isearch ((t (:foreground "#FAFAFA" :background "#558b2f"))))
  '(isearch-fail ((t (:inverse-video t :background "#FAFAFA" :inherit (font-lock-warning-face)))))
  '(lazy-highlight ((((class color) (min-colors 88) (background light)) (:background "paleturquoise"))
