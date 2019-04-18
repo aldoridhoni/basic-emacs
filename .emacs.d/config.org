@@ -154,12 +154,11 @@ https://blog.codinghorror.com/death-to-the-space-infidels/
 
 - Set frame-title. https://www.emacswiki.org/emacs/FrameTitle
 #+BEGIN_SRC emacs-lisp
-    (setq frame-title-format
-          '(""
-           (buffer-file-name "%f"
-                             (dired-directory dired-directory "%b"))
-            " - " "Basic Emacs " emacs-version
-           ))
+  (setq frame-title-format
+        '(""
+         (buffer-file-name "%f"
+                           (dired-directory dired-directory "%b"))
+          " - " "Basic Emacs " emacs-version))
 #+END_SRC
 
 ** Home folder hacks
@@ -185,7 +184,7 @@ Use tilde to get user home dir.
 #+END_SRC
 
 #+BEGIN_SRC emacs-lisp
-(defun abbreviate-file-name (filename) filename)
+  (defun abbreviate-file-name (filename) filename)
 #+END_SRC
 * Packages
 ** Meta Package - Package
@@ -216,7 +215,7 @@ Use tilde to get user home dir.
 ** Bundled packages
 - dired
 #+BEGIN_SRC emacs-lisp
-  (require 'dired )
+  (require 'dired)
   (put 'dired-find-alternate-file 'disabled nil)
   (define-key dired-mode-map (kbd "RET") 'dired-find-alternate-file) ; was dired-advertised-find-file
 #+END_SRC
@@ -247,18 +246,20 @@ Use tilde to get user home dir.
       (defvar helm-source-header-default-box
         (face-attribute 'helm-source-header :box))
       (defvar helm-source-header-default-height
-        (face-attribute 'helm-source-header :height))
-      )
+        (face-attribute 'helm-source-header :height)))
     :bind(("M-x" . helm-M-x)
           ("<menu>" . helm-M-x)
           ("C-x b" . helm-mini)
-          ("C-x C-f" . helm-find-files))
-    )
+          ("C-x C-f" . helm-find-files)))
 #+END_SRC
 
 - Hide line-number
 #+BEGIN_SRC emacs-lisp
-  (add-hook 'helm-mode-hook (lambda () (display-line-numbers-mode -1)))
+  (add-hook 'helm-mode-hook
+            (lambda ()
+              (if (fboundp 'display-line-numbers-mode)
+                  (display-line-numbers-mode -1)
+                (linum-mode -1))))
 #+END_SRC
 
 - Helm descbind
@@ -294,8 +295,7 @@ Use tilde to get user home dir.
       (setq multi-term-program "bash"
             multi-term-buffer-name "shell* *"
             multi-term-default-dir 'user-home-real-dir
-            multi-term-dedicated-select-after-open-p t
-            )
+            multi-term-dedicated-select-after-open-p t)
 #+END_SRC
 
 - Keybind for dedicated window
@@ -323,8 +323,7 @@ Use tilde to get user home dir.
       (setq magit-save-repository-buffers 'dontask
             magit-auto-revert-mode t)
       (global-set-key (kbd "C-x g") 'magit-status)
-      (global-set-key (kbd "C-x M-g") 'magit-dispatch-popup)
-      ))
+      (global-set-key (kbd "C-x M-g") 'magit-dispatch-popup)))
 #+END_SRC
 ** Restart Emacs
 #+BEGIN_SRC emacs-lisp
@@ -332,10 +331,12 @@ Use tilde to get user home dir.
     :config
     (progn
       (defalias 'r 'restart-emacs)
-      (when (file-exists-p (expand-file-name "start.sh" user-home-dir))
+      (when (file-exists-p
+             (expand-file-name "start.sh" user-home-dir))
         (defun restart-emacs--start-gui-using-sh (&optional args)
-          (call-process (expand-file-name "start.sh" user-home-dir) nil 0 nil)))
-      ))
+          (call-process
+           (expand-file-name "start.sh" user-home-dir)
+           nil 0 nil)))))
 #+END_SRC
 
 ** Themes
@@ -392,8 +393,7 @@ Use tilde to get user home dir.
 #+BEGIN_SRC emacs-lisp
   (use-package all-the-icons-dired
     :config
-    (add-hook 'dired-mode-hook #'all-the-icons-dired-mode)
-    )
+    (add-hook 'dired-mode-hook #'all-the-icons-dired-mode))
 #+END_SRC
 ** Flycheck
 - Flycheck : On the fly syntax checking.
@@ -403,8 +403,7 @@ Use tilde to get user home dir.
     (progn
       (defvaralias 'flycheck-python-pylint-executable 'python-shell-interpreter)
       (defvaralias 'flycheck-python-flake8-executable 'python-shell-interpreter)
-      (add-hook 'prog-mode-hook #'flycheck-mode)
-    ))
+      (add-hook 'prog-mode-hook #'flycheck-mode)))
 #+END_SRC
 ** Projectile
 - Configuration
@@ -417,8 +416,7 @@ Use tilde to get user home dir.
             projectile-keymap-prefix (kbd "C-c p")
             projectile-switch-project-action 'neotree-projectile-action)
       (add-to-list 'projectile-globally-ignored-directories "node-modules")
-      (add-to-list 'projectile-globally-ignored-directories "__pycache__")
-      ))
+      (add-to-list 'projectile-globally-ignored-directories "__pycache__")))
 #+END_SRC
 
 - Helm integration, =C-c p h=
@@ -430,16 +428,14 @@ Use tilde to get user home dir.
     :config
     (progn
       (setq projectile-completion-system 'helm)
-      (setq projectile-switch-project-action 'helm-projectile)
-      ))
+      (setq projectile-switch-project-action 'helm-projectile)))
 #+END_SRC
 ** Company
 - Company: Complete Anything, completion framework.
 #+BEGIN_SRC emacs-lisp
   (use-package company
     :config
-    (add-hook 'prog-mode-hook #'company-mode)
-    )
+    (add-hook 'prog-mode-hook #'company-mode))
 #+END_SRC
 * Programming Language
 ** Python Mode
@@ -451,8 +447,7 @@ Use tilde to get user home dir.
     (progn
       (setq py-python-command "python3"
             python-shell-interpreter "python3"
-            python-indent-offset 4)
-      ))
+            python-indent-offset 4)))
 #+END_SRC
 
 - Goggle yapf fix syntax formatting.
@@ -465,14 +460,13 @@ Use tilde to get user home dir.
 - Add keybinding for F12 key. Mainly for simple python scripts.
 #+BEGIN_SRC emacs-lisp
   (with-eval-after-load "python"
-      (define-key python-mode-map
-        (kbd "<f12>")
-        (lambda ()
-          (interactive)
-          (run-python)
-          (python-shell-send-buffer)
-          (python-shell-switch-to-shell)
-          )))
+    (define-key python-mode-map
+      (kbd "<f12>")
+      (lambda ()
+        (interactive)
+        (run-python)
+        (python-shell-send-buffer)
+        (python-shell-switch-to-shell))))
 #+END_SRC
 ** Rust Mode
 #+BEGIN_SRC emacs-lisp
@@ -542,17 +536,25 @@ Use tilde to get user home dir.
                               org-level-3
                               org-level-4
                               org-level-5))
-                (set-face-attribute face nil :weight 'normal :height 1.0)))
-            )
+                (set-face-attribute face nil :weight 'normal :height 1.0))))
 #+END_SRC
 
 ** Org Src
 - Remove flycheck in org-src-mode for emacs-lisp-mode
 #+BEGIN_SRC emacs-lisp
-  ;; This hook run before major-mode hook
-  ;; (add-hook 'org-src-mode-hook (lambda () (flycheck-mode -1)))
+  (add-hook 'org-src-mode-hook
+            (lambda ()
+              (when (equal major-mode 'emacs-lisp-mode)
+                (remove-hook 'prog-mode-hook #'flycheck-mode t)
+                (when (fboundp 'flycheck-mode) (flycheck-mode -1)))))
 
-  (add-hook 'emacs-lisp-mode-hook (lambda () (flycheck-mode -1)))
+
+  ;;(add-hook 'emacs-lisp-mode-hook
+  ;;          (lambda ()
+              ;;(when (and (symbolp 'org-src-mode)
+                         ;;(symbol-value 'org-src-mode))
+                ;;(remove-hook 'prog-mode-hook #'flycheck-mode t)
+                ;;(when (fboundp 'flycheck-mode) (flycheck-mode -1)))))
 #+END_SRC
 * Other Modes
 ** Fish
@@ -572,8 +574,8 @@ Use tilde to get user home dir.
           eshell-prefer-lisp-functions nil
           eshell-destroy-buffer-when-process-dies t
           eshell-cmpl-cycle-completions nil
-          eshell-cmpl-dir-ignore "\\`\\(\\.\\.?\\|CVS\\|\\.svn\\|\\.git\\)/\\'"
-          ))
+          eshell-cmpl-dir-ignore
+          "\\`\\(\\.\\.?\\|CVS\\|\\.svn\\|\\.git\\)/\\'"))
 #+END_SRC
 ** Visual Executeables
 - Need special display - will run in term buffer.
@@ -585,9 +587,10 @@ Use tilde to get user home dir.
                 (add-to-list 'eshell-visual-commands "ssh")
                 (add-to-list 'eshell-visual-commands "tail")
                 (add-to-list 'eshell-visual-commands "top")
-                (add-to-list 'eshell-visual-options '("git" "--help" "--paginate"))
-                (add-to-list 'eshell-visual-subcommands '("git" "log" "diff" "show"))
-                )))
+                (add-to-list 'eshell-visual-options
+                             '("git" "--help" "--paginate"))
+                (add-to-list 'eshell-visual-subcommands
+                             '("git" "log" "diff" "show")))))
 #+END_SRC
 
 ** Aliases
@@ -602,7 +605,6 @@ Use tilde to get user home dir.
                 (eshell/alias "ee" "find-file-other-window $1")
                 (eshell/alias "d" "dired $1")
                 (eshell/alias "c" "eshell/clear $1"))))
-
 #+END_SRC
 
 ** Clear
@@ -651,8 +653,7 @@ Use tilde to get user home dir.
     "Wraps function in real HOME"
     (setenv "HOME" user-home-real-dir)
     (funcall fn n)
-    (setenv "HOME" user-home-dir)
-    )
+    (setenv "HOME" user-home-dir))
 #+END_SRC
 ** Fish in multi-term
 #+BEGIN_SRC emacs-lisp
@@ -660,18 +661,19 @@ Use tilde to get user home dir.
     (interactive)
     (let ((multi-term-program "fish")
           (multi-term-buffer-name "fish* *"))
-         (multi-term))
-    )
+      (multi-term)))
 #+END_SRC
 
 - Hook for term-mode
 #+BEGIN_SRC emacs-lisp
-    (add-hook 'term-mode-hook (lambda ()
-      (setq term-buffer-maximum-size 10000)
-      (setq show-trailingwhitespace nil)
-      (display-line-numbers-mode -1)
-      (define-key term-raw-map (kbd "C-y") 'term-paste)
-    ))
+  (add-hook 'term-mode-hook
+            (lambda ()
+              (setq term-buffer-maximum-size 10000)
+              (setq show-trailingwhitespace nil)
+              (define-key term-raw-map (kbd "C-y") 'term-paste))
+            (if (fboundp 'display-line-numbers-mode)
+                (display-line-numbers-mode -1)
+              (linum-mode -1)))
 #+END_SRC
 
 - Kill term buffer when process exit
@@ -685,8 +687,7 @@ Use tilde to get user home dir.
 #+BEGIN_SRC emacs-lisp
   (defun aldo/edit-config-file ()
     (interactive)
-    (find-file (expand-file-name "config.org" user-emacs-directory))
-  )
+    (find-file (expand-file-name "config.org" user-emacs-directory)))
 #+END_SRC
 
 #+BEGIN_SRC emacs-lisp
@@ -698,14 +699,12 @@ Use tilde to get user home dir.
 ** Compile (tangle) this file
 #+BEGIN_SRC emacs-lisp
   (defun aldo/tangle-config-file ()
-      (interactive)
+    (interactive)
     (let ((file (expand-file-name "config.org" user-emacs-directory)))
-          (org-babel-tangle-file
-           file
-           (concat (file-name-sans-extension file) ".el")
-           "emacs-lisp")
-          )
-     )
+      (org-babel-tangle-file
+       file
+       (concat (file-name-sans-extension file) ".el")
+       "emacs-lisp")))
 #+END_SRC
 ** Open =org-directory=
 #+BEGIN_SRC emacs-lisp
@@ -756,8 +755,7 @@ Use tilde to get user home dir.
     (yank)
     (open-line 1)
     (next-line 1)
-    (yank)
-    )
+    (yank))
 #+END_SRC
 
 #+BEGIN_SRC emacs-lisp
@@ -865,8 +863,7 @@ Use tilde to get user home dir.
     (let ((enabled
            (if (get 'aldo/dark-theme 'enabled)
                (get 'aldo/dark-theme 'enabled)
-             nil)
-           ))
+             nil)))
       (if (not enabled)
           (progn
             (message "Switching to dark theme")
@@ -890,8 +887,7 @@ Use tilde to get user home dir.
     (let ((enabled
            (if (get 'aldo/light-theme 'enabled)
                (get 'aldo/light-theme 'enabled)
-             nil)
-           ))
+             nil)))
       (if (not enabled)
           (progn
             (message "Switching to light theme")
@@ -980,32 +976,32 @@ Use tilde to get user home dir.
 - Set font function.
 #+BEGIN_SRC emacs-lisp
   (defun aldo/__set-font ()
-    ;; load Fira Code Ligatures
-    (when
-        (member "Fira Code Symbol" (font-family-list))
-      (load "fira-code")
-      (message "Loading Fira Code Ligatures"))
+      ;; load Fira Code Ligatures
+      (when
+          (member "Fira Code Symbol" (font-family-list))
+        (load "fira-code")
+        (message "Loading Fira Code Ligatures"))
 
-    ;; set frame font
-    (let ((default-font
-            (cond
-             ((find-font (font-spec :name "PragmataPro"))
-              "PragmataPro-11")
-             ((member "Source Code Pro" (font-family-list))
-              "Source Code Pro-11")
-             ((member "Inconsolata" (font-family-list))
-              "Inconsolata-11")
-             ((member "DejaVu Sans Mono" (font-family-list))
-              "DejaVu Sans Mono-11")
-             ((member "Menlo" (font-family-list))
-              "Menlo-11")
-             (t
-              "monospace-12")
-             )))
-      (set-frame-font default-font t t)
-      (add-to-list 'initial-frame-alist `(font . ,default-font))
-      (add-to-list 'default-frame-alist `(font . ,default-font))
-      (message "Setting font to %s" default-font)))
+      ;; set frame font
+      (let ((default-font
+              (cond
+               ((find-font (font-spec :name "PragmataPro"))
+                "PragmataPro-11")
+               ((member "Source Code Pro" (font-family-list))
+                "Source Code Pro-11")
+               ((member "Inconsolata" (font-family-list))
+                "Inconsolata-11")
+               ((member "DejaVu Sans Mono" (font-family-list))
+                "DejaVu Sans Mono-11")
+               ((member "Menlo" (font-family-list))
+                "Menlo-11")
+               (t
+                "monospace-12"))))
+
+        (set-frame-font default-font t t)
+        (add-to-list 'initial-frame-alist `(font . ,default-font))
+        (add-to-list 'default-frame-alist `(font . ,default-font))
+        (message "Setting font to %s" default-font)))
 #+END_SRC
 
 - Load aldo-menu
@@ -1015,14 +1011,11 @@ Use tilde to get user home dir.
 
 - Hook when new frame created.
 #+BEGIN_SRC emacs-lisp
-(add-hook 'after-make-frame-functions
+  (add-hook 'after-make-frame-functions
             (lambda (frame)
               ;; (message "New frame %S" frame)
               (when (display-graphic-p frame)
-                (aldo/__set-font)
-                )
-              )
-            )
+                (aldo/__set-font))))
 #+END_SRC
 
 - Startup hook.
@@ -1034,14 +1027,15 @@ Use tilde to get user home dir.
               (zone-when-idle (* 2400 60))
 
               ;; Maximize initial frame
-              ;; (add-to-list 'initial-frame-alist '(fullscreen . maximized))
-              ;; (add-to-list 'default-frame-alist '(fullscreen . maximized))
-              (toggle-frame-maximized)
+              (add-to-list 'initial-frame-alist '(fullscreen . maximized))
+              (add-to-list 'default-frame-alist '(fullscreen . maximized))
+              ;; (toggle-frame-maximized)
 
               ;;macOS
               (when (featurep 'cocoa) (toggle-frame-fullscreen))
 
               (aldo/__time-based-theme)
+              (aldo/__set-font)
               ))
 #+END_SRC
 ** Starting server
