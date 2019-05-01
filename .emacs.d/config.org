@@ -191,7 +191,7 @@ Use tilde to get user home dir.
 #+BEGIN_SRC emacs-lisp
 (require 'package)
 (add-to-list 'package-archives '("melpa" . "https://melpa.org/packages/") t)
-(add-to-list 'package-archives '("org" . "http://orgmode.org/elpa/") t)
+(add-to-list 'package-archives '("org" . "https://orgmode.org/elpa/") t)
 (package-initialize)
 #+END_SRC
 
@@ -490,12 +490,23 @@ Use tilde to get user home dir.
       (setq projectile-completion-system 'helm)
       (setq projectile-switch-project-action 'helm-projectile)))
 #+END_SRC
+
 ** Company
 - Company: Complete Anything, completion framework.
 #+BEGIN_SRC emacs-lisp
   (use-package company
     :config
     (add-hook 'prog-mode-hook #'company-mode))
+#+END_SRC
+** Elfeed
+- Feed reader for emacs
+#+BEGIN_SRC emacs-lisp
+  (use-package elfeed)
+#+END_SRC
+** Basic Menu
+#+BEGIN_SRC emacs-lisp
+  (use-package basic-menu
+    :load-path "lisp")
 #+END_SRC
 * Programming Language
 ** Python Mode
@@ -542,14 +553,18 @@ Use tilde to get user home dir.
     :mode "\\.html\\'")
 #+END_SRC
 ** Emmet
-- Emmet expand css like syntax to html, Eg. div.class -> <div class="class"></div>.
+- Emmet expand css like syntax to html, Eg. ~div.class~ to ~<div class="class"></div>~.
 #+BEGIN_SRC emacs-lisp
   (use-package emmet-mode
     :mode "\\.html\\'")
 #+END_SRC
 ** Markdown Mode
 #+BEGIN_SRC emacs-lisp
-  (use-package markdown-mode)
+  (use-package markdown-mode
+    :mode (("README\\.md\\'" . gfm-mode)
+           ("\\.md\\'" . markdown-mode)
+           ("\\.markdown\\'" . markdown-mode))
+    :init (setq markdown-command "markdown"))
 #+END_SRC
 * Org-mode
 ** Set variables
@@ -682,7 +697,7 @@ Use tilde to get user home dir.
 #+END_SRC
 ** Insert Line Before
 #+BEGIN_SRC emacs-lisp
-  (global-set-key (kbd "C-S-o") 'aldo/insert-line-before)
+  (global-set-key (kbd "C-S-o") 'config/insert-line-before)
 #+END_SRC
 
 ** Aliases
@@ -693,7 +708,7 @@ Use tilde to get user home dir.
 
 ** Edit this file kbd
 #+BEGIN_SRC emacs-lisp
-  (global-set-key (kbd "<f6>") 'aldo/edit-config-file)
+  (global-set-key (kbd "<f6>") 'config/edit-config-file)
 #+END_SRC
 
 ** Kill current buffer
@@ -709,7 +724,7 @@ Use tilde to get user home dir.
 * Custom Functions
 ** Real =HOME= wrapper
 #+BEGIN_SRC emacs-lisp
-  (defun aldo/wrap-real-home (fn &optional n)
+  (defun config/wrap-real-home (fn &optional n)
     "Wraps function in real HOME"
     (setenv "HOME" user-home-real-dir)
     (funcall fn n)
@@ -717,7 +732,7 @@ Use tilde to get user home dir.
 #+END_SRC
 ** Fish in multi-term
 #+BEGIN_SRC emacs-lisp
-  (defun aldo/fish-term ()
+  (defun config/fish-term ()
     (interactive)
     (let ((multi-term-program "fish")
           (multi-term-buffer-name "fish* *"))
@@ -745,20 +760,20 @@ Use tilde to get user home dir.
 
 ** Edit this file
 #+BEGIN_SRC emacs-lisp
-  (defun aldo/edit-config-file ()
+  (defun config/edit-config-file ()
     (interactive)
     (find-file (expand-file-name "config.org" user-emacs-directory)))
 #+END_SRC
 
 #+BEGIN_SRC emacs-lisp
-  (defun aldo/__tangle-config-file ()
+  (defun config/__tangle-config-file ()
     (org-babel-tangle-file
      (expand-file-name "config.org" user-emacs-directory)))
 #+END_SRC
 
 ** Compile (tangle) this file
 #+BEGIN_SRC emacs-lisp
-  (defun aldo/tangle-config-file ()
+  (defun config/tangle-config-file ()
     (interactive)
     (let ((file (expand-file-name "config.org" user-emacs-directory)))
       (org-babel-tangle-file
@@ -768,14 +783,14 @@ Use tilde to get user home dir.
 #+END_SRC
 ** Open =org-directory=
 #+BEGIN_SRC emacs-lisp
-  (defun aldo/dired-org-dir ()
+  (defun config/dired-org-dir ()
     (interactive)
     (dired org-directory))
 #+END_SRC
 ** Insert new line before
 - Keybind at C-S-o. Kinda inverse of open-line C-o. Can be called with universal argument C-u.
 #+BEGIN_SRC emacs-lisp
-  (defun aldo/insert-line-before (times)
+  (defun config/insert-line-before (times)
     (interactive "p")
     (save-excursion
      (move-beginning-of-line 1)
@@ -783,7 +798,7 @@ Use tilde to get user home dir.
 #+END_SRC
 ** Indent
 #+BEGIN_SRC emacs-lisp
-  (defun aldo/infer-indentation-style ()
+  (defun config/infer-indentation-style ()
     ;; if our source file uses tabs, we use tabs, if spaces spaces, and if
     ;; neither, we use the current indent-tabs-mode
     (let ((space-count (how-many "^  " (point-min) (point-max)))
@@ -827,7 +842,7 @@ Use tilde to get user home dir.
   (setq useful-buffers-regexp '("\\*scratch\\*"))
   (setq useless-buffers-regexp '("*\.\+"))
 
-  (defun _aldo/useful-buffer-p (buffer)
+  (defun _config/useful-buffer-p (buffer)
     (let ((buf-name (buffer-name buffer)))
       (or
        (cl-loop for useful-regexp in useful-buffers-regexp
@@ -837,32 +852,32 @@ Use tilde to get user home dir.
        (with-current-buffer buffer
          (derived-mode-p 'comint-mode)))))
 
-  (defun _aldo/useless-buffer-p (buffer)
-    (not (_aldo/useful-buffer-p buffer)))
+  (defun _config/useless-buffer-p (buffer)
+    (not (_config/useful-buffer-p buffer)))
 
-  (defun _aldo/change-buffer (action)
+  (defun _config/change-buffer (action)
     (interactive)
     (let ((start-buffer (buffer-name)))
       (funcall action)
       (while
           (and
-           (_aldo/useless-buffer-p (current-buffer))
+           (_config/useless-buffer-p (current-buffer))
            (not (equal start-buffer (buffer-name))))
         (funcall action))))
 
-  (defun _aldo/next-buffer ()
+  (defun _config/next-buffer ()
     (interactive)
-    (_aldo/change-buffer 'next-buffer))
+    (_config/change-buffer 'next-buffer))
 
-  (defun _aldo/previous-buffer ()
+  (defun _config/previous-buffer ()
     (interactive)
-    (_aldo/change-buffer 'previous-buffer))
+    (_config/change-buffer 'previous-buffer))
 #+END_SRC
 
 - Remap command and set keybind following setup-keys.el with [pause] / [break] key
 #+BEGIN_SRC emacs-lisp
-  (global-set-key [remap next-buffer] '_aldo/next-buffer)
-  (global-set-key [remap previous-buffer] '_aldo/previous-buffer)
+  (global-set-key [remap next-buffer] '_config/next-buffer)
+  (global-set-key [remap previous-buffer] '_config/previous-buffer)
   (global-set-key [M-pause] 'next-buffer)
   (global-set-key [C-pause] 'previous-buffer)
 #+END_SRC
@@ -878,7 +893,7 @@ Use tilde to get user home dir.
 #+END_SRC
 ** Empty Kill ring
 #+BEGIN_SRC emacs-lisp
-  (defun aldo/empty-killring ()
+  (defun config/empty-killring ()
     (interactive)
     (progn
       (setq kill-ring nil)
@@ -887,20 +902,20 @@ Use tilde to get user home dir.
 ** Open current file in eww & xwidget webkit
 - Emacs Web Wowser
 #+BEGIN_SRC emacs-lisp
-  (defun aldo/open-buffer-in-eww ()
+  (defun config/open-buffer-in-eww ()
     (interactive)
     (eww (concat "file://" buffer-file-truename)))
 #+END_SRC
 
 - Xwidget Webkit
 #+BEGIN_SRC emacs-lisp
-  (defun aldo/open-buffer-in-xwidget-webkit ()
+  (defun config/open-buffer-in-xwidget-webkit ()
     (interactive)
     (xwidget-webkit-browse-url
      (concat "file://" buffer-file-truename)))
 #+END_SRC
 ** Theme
-- Append lisp folder custom-theme-load-path so we can load aldo-theme
+- Append lisp folder custom-theme-load-path so we can load basic-theme
 #+BEGIN_SRC emacs-lisp
   (add-to-list 'custom-theme-load-path (concat user-emacs-directory "lisp"))
 #+END_SRC
@@ -910,81 +925,81 @@ Use tilde to get user home dir.
   (defcustom dark-theme-enable nil
     "Set non nil turn on dark-theme at startup")
 
-  (defcustom aldo/dark-theme 'monokai nil)
+  (defcustom basic/dark-theme 'monokai nil)
 
-  (defcustom aldo/light-theme 'aldo nil)
+  (defcustom basic/light-theme 'basic nil)
 #+END_SRC
 
 - Dark theme
 #+BEGIN_SRC emacs-lisp
-  (defun aldo/dark-theme ()
-    "Set theme to value of `aldo/dark-theme'."
+  (defun basic/dark-theme ()
+    "Set theme to value of `basic/dark-theme'."
     (interactive)
     (let ((enabled
-           (if (get 'aldo/dark-theme 'enabled)
-               (get 'aldo/dark-theme 'enabled)
+           (if (get 'basic/dark-theme 'enabled)
+               (get 'basic/dark-theme 'enabled)
              nil)))
       (if (not enabled)
           (progn
             (message "Switching to dark theme")
 
-            (put 'aldo/dark-theme 'enabled t)
-            (put 'aldo/light-theme 'enabled nil)
+            (put 'basic/dark-theme 'enabled t)
+            (put 'basic/light-theme 'enabled nil)
 
             (dolist (theme custom-enabled-themes)
               (disable-theme theme))
 
-            (load-theme aldo/dark-theme t))
+            (load-theme basic/dark-theme t))
 
         (user-error "Already in dark theme"))))
 #+END_SRC
 
 - Light theme
 #+BEGIN_SRC emacs-lisp
-  (defun aldo/light-theme ()
-    "Set theme to value of `aldo/light-theme'."
+  (defun basic/light-theme ()
+    "Set theme to value of `basic/light-theme'."
     (interactive)
     (let ((enabled
-           (if (get 'aldo/light-theme 'enabled)
-               (get 'aldo/light-theme 'enabled)
+           (if (get 'basic/light-theme 'enabled)
+               (get 'basic/light-theme 'enabled)
              nil)))
       (if (not enabled)
           (progn
             (message "Switching to light theme")
 
-            (put 'aldo/light-theme 'enabled t)
-            (put 'aldo/dark-theme 'enabled nil)
+            (put 'basic/light-theme 'enabled t)
+            (put 'basic/dark-theme 'enabled nil)
 
             (dolist (theme custom-enabled-themes)
               (disable-theme theme))
 
-            (load-theme aldo/light-theme t))
+            (load-theme basic/light-theme t))
 
         (user-error "Already in light theme"))))
 #+END_SRC
 
 - Enable dark-theme based on time of launch at 6pm.
 #+BEGIN_SRC emacs-lisp
-  (defun aldo/__time-based-theme ()
+  (defun config/__time-based-theme ()
     (let ((now (string-to-number (format-time-string "%H"))))
       (if (or (>= now 18) (<= now 6))
-           (aldo/dark-theme)
-           (aldo/light-theme))))
+           (basic/dark-theme)
+           (basic/light-theme))))
 #+END_SRC
 * Hooks
 ** Programming modes
 - Infer indentation
 #+BEGIN_SRC emacs-lisp
-  (add-hook 'prog-mode-hook 'aldo/infer-indentation-style)
+  (add-hook 'prog-mode-hook 'config/infer-indentation-style)
 #+END_SRC
 ** Other
 - Delete trailing whitespace
 #+BEGIN_SRC emacs-lisp
-  (defun _aldo/before-save-hook ()
+  (defun _config/before-save-hook ()
     (when (derived-mode-p 'prog-mode)
       (delete-trailing-whitespace)))
 
-  (add-hook 'before-save-hook '_aldo/before-save-hook)
+  (add-hook 'before-save-hook '_config/before-save-hook)
 #+END_SRC
 
 - Dired-x
@@ -1035,7 +1050,7 @@ Use tilde to get user home dir.
 ** Do something if in graphic mode
 - Set font function.
 #+BEGIN_SRC emacs-lisp
-  (defun aldo/__set-font ()
+  (defun config/__set-font ()
       ;; load Fira Code Ligatures
       (when
           (member "Fira Code Symbol" (font-family-list))
@@ -1064,18 +1079,13 @@ Use tilde to get user home dir.
         (message "Setting font to %s" default-font)))
 #+END_SRC
 
-- Load aldo-menu
-#+BEGIN_SRC emacs-lisp
-  (load "aldo-menu")
-#+END_SRC
-
 - Hook when new frame created.
 #+BEGIN_SRC emacs-lisp
   (add-hook 'after-make-frame-functions
             (lambda (frame)
               ;; (message "New frame %S" frame)
               (when (display-graphic-p frame)
-                (aldo/__set-font))))
+                (config/__set-font))))
 #+END_SRC
 
 - Startup hook.
@@ -1094,8 +1104,8 @@ Use tilde to get user home dir.
               ;;macOS
               (when (featurep 'cocoa) (toggle-frame-fullscreen))
 
-              (aldo/__time-based-theme)
-              (aldo/__set-font)
+              (config/__time-based-theme)
+              (config/__set-font)
               ))
 #+END_SRC
 ** Starting server
