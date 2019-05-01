@@ -1,11 +1,11 @@
-;;; aldo-theme.el --- Personal theme
-(deftheme aldo
+;;; basic-theme.el --- Personal theme
+(deftheme basic
 ;;; Commentary:
   "Created 2018-06-23. Based of Material Light & Espresso color
    Updated 2019-04-16: Change few faces based of BBEdit light color")
 ;;; Code:
 (custom-theme-set-faces
- 'aldo
+ 'basic
  '(default ((t (:foundry "fsdf" :width normal :weight normal :slant normal :underline nil
                          :overline nil :strike-through nil :box nil :inverse-video nil :foreground "#131313"
                          :background "#F7F7F7" :stipple nil :inherit nil))))
@@ -85,5 +85,5 @@
  '(next-error ((t (:inherit (region)))))
  '(query-replace ((t (:inherit (isearch))))))
 
-(provide-theme 'aldo)
-;;; aldo-theme.el ends here
+(provide-theme 'basic)
+;;; basic-theme.el ends here

@@ -211,6 +211,66 @@ Use tilde to get user home dir.
   (setq use-package-always-ensure t)
   (setq use-package-compute-statistics t)
 #+END_SRC
+** External Lisp
+- Create ~site-lisp~ directory.
+#+BEGIN_SRC emacs-lisp
+  (unless (file-directory-p (concat user-emacs-directory "site-lisp"))
+    (make-directory (concat user-emacs-directory "site-lisp")))
+#+END_SRC
+
+- Downloader
+#+BEGIN_SRC emacs-lisp
+  (defun __config/downloader (url filename &optional force autoload)
+      (let ((file (expand-file-name filename (concat user-emacs-directory "site-lisp"))))
+        (require 'url)
+        (condition-case signal
+            (url-copy-file url file force)
+          (file-already-exists (message "%s" signal)))
+        (and autoload
+             (file-exists-p file)
+             (load file))))
+#+END_SRC
+
+- imenu-list.el : Show dedicated buffer for imenu.
+#+BEGIN_SRC emacs-lisp
+  (__config/downloader "https://raw.githubusercontent.com/bmag/imenu-list/master/imenu-list.el" "imenu-list.el" nil t)
+#+END_SRC
+
+- frame-fns.el : needed by frame-cmds.el
+#+BEGIN_SRC emacs-lisp
+  (__config/downloader "https://www.emacswiki.org/emacs/download/frame-fns.el" "frame-fns.el" nil t)
+#+END_SRC
+
+- frame-cmds.el : needed by zomm-frm.el
+#+BEGIN_SRC emacs-lisp
+  (__config/downloader "https://www.emacswiki.org/emacs/download/frame-cmds.el" "frame-cmds.el" nil t)
+#+END_SRC
+
+- zoom-frm.el
+#+BEGIN_SRC emacs-lisp
+  (__config/downloader "https://www.emacswiki.org/emacs/download/zoom-frm.el" "zoom-frm.el" nil t)
+#+END_SRC
+
+
+- thingatpt+.el
+#+BEGIN_SRC emacs-lisp
+  (__config/downloader "https://www.emacswiki.org/emacs/download/thingatpt%2b.el" "thingatpt+.el" nil t)
+#+END_SRC
+
+- strings.el
+#+BEGIN_SRC emacs-lisp
+  (__config/downloader "https://www.emacswiki.org/emacs/download/strings.el" "strings.el" nil t)
+#+END_SRC
+
+- misc-fns.el
+#+BEGIN_SRC emacs-lisp
+  (__config/downloader "https://www.emacswiki.org/emacs/download/misc-fns.el" "misc-fns.el" nil t)
+#+END_SRC
+
+- fira-code.el
+#+BEGIN_SRC emacs-lisp
+  (__config/downloader "https://gist.githubusercontent.com/alphapapa/0d38f082e609ed059cc7f2ed9caa7e3d/raw/288f922a56451f9fb096a1514684d232241fdcda/init.el" "fira-code.el")
+#+END_SRC
 
 ** Bundled packages
 - dired
@@ -309,7 +369,7 @@ Use tilde to get user home dir.
 ** Zoom-frm
 #+BEGIN_SRC emacs-lisp
   (use-package zoom-frm
-    :load-path "lisp"
+    :load-path "site-lisp"
     :bind (("C-x C-+" . zoom-in/out)
            ("C-x C--" . zoom-in/out)
            ("C-x C-=" . zoom-in/out)

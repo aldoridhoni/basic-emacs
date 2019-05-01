@@ -1,4 +1,4 @@
-;;; aldo-menu.el --- Create new menu entry
+;;; basic-menu.el --- Create new menu entry
 ;;; Commentary:
 
 ;;; Code:
@@ -96,5 +96,5 @@
 ;;; To remove this menu
 ;;; (global-unset-key [menu-bar Basic\ Config])
 ;;; (global-unset-key [menu-bar Navigation])
-(provide 'aldo-menu)
+(provide 'basic-menu)
 ;;; aldo-menu.el ends here
