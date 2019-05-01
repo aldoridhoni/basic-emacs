@@ -16,3 +16,6 @@
 .emacs.d/auto-save-list/
 .emacs.d/auto-save/
 .emacs.d/url/
+.emacs.d/site-lisp/
+.elfeed/
+README.html
