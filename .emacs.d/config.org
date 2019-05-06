@@ -9,6 +9,7 @@
   (setq inhibit-splash-screen t
         require-final-newline t
         initial-scratch-message nil
+        inhibit-startup-echo-area-message nil
         delete-trailing-lines nil
         visible-bell t
         server-name "basic")
@@ -63,7 +64,7 @@
       (progn
         (add-hook 'prog-mode-hook #'display-line-numbers-mode)
         (add-hook 'text-mode-hook #'display-line-numbers-mode)
-        (setq display-line-number-type t))
+        (setq display-line-numbers-type 'visual))
     (global-linum-mode t))
 #+END_SRC
 
@@ -95,6 +96,7 @@
 - Save minibuffer history
 #+BEGIN_SRC emacs-lisp
   (savehist-mode t)
+  (setq savehist-file (expand-file-name (concat user-emacs-directory "history")))
 #+END_SRC
 
 - Display 'lambda' as 'λ'
@@ -142,6 +144,11 @@ https://blog.codinghorror.com/death-to-the-space-infidels/
       (setq tramp-auto-save-directory auto-save-folder))
 #+END_SRC
 
+- Fix auto-save-list-file-prefix
+#+BEGIN_SRC emacs-lisp
+  (setq auto-save-list-file-prefix (expand-file-name auto-save-list-file-prefix))
+#+END_SRC
+
 - Overwrite selected text
 #+BEGIN_SRC emacs-lisp
   (delete-selection-mode t)
@@ -152,22 +159,41 @@ https://blog.codinghorror.com/death-to-the-space-infidels/
   (setq custom-safe-themes t)
 #+END_SRC
 
-- Set frame-title. https://www.emacswiki.org/emacs/FrameTitle
+- Set frame-title. Read [[https://www.emacswiki.org/emacs/FrameTitle][emacswiki]].
 #+BEGIN_SRC emacs-lisp
-  (setq frame-title-format
+  (setq-default frame-title-format
         '(""
          (buffer-file-name "%f"
                            (dired-directory dired-directory "%b"))
           " - " "Basic Emacs " emacs-version))
 #+END_SRC
 
+- Mode Line format.
+#+BEGIN_SRC emacs-lisp
+  (setq-default mode-line-format
+        `("%e"
+         mode-line-front-space
+         (vc-mode vc-mode)
+         "   "
+         mode-line-mule-info
+         mode-line-client
+         mode-line-modified
+         mode-line-remote
+         mode-line-frame-identification
+         mode-line-buffer-identification
+         "  "
+         mode-line-modes
+         mode-line-misc-info
+         mode-line-position
+         mode-line-end-spaces))
+#+END_SRC
 ** Home folder hacks
 There were two scenarios to think about. First emacs is started from out start.sh script. Second if dot emacs folder is symlink to basic emacs dot emacs folder.
 - User home folder
 Use tilde to get user home dir.
 #+BEGIN_SRC emacs-lisp
   (defconst user-home-dir (file-name-as-directory
-                   (expand-file-name "~")))
+                   (expand-file-name "~/")))
   (defconst user-emacs-directory (expand-file-name user-emacs-directory))
   (defconst user-init-file (expand-file-name "init.el" user-emacs-directory))
 #+END_SRC
@@ -220,12 +246,10 @@ Use tilde to get user home dir.
 
 - Downloader
 #+BEGIN_SRC emacs-lisp
-  (defun __config/downloader (url filename &optional force autoload)
+  (defun config/_downloader (url filename &optional force autoload)
       (let ((file (expand-file-name filename (concat user-emacs-directory "site-lisp"))))
         (require 'url)
-        (condition-case signal
-            (url-copy-file url file force)
-          (file-already-exists (message "%s" signal)))
+        (with-demoted-errors "%S" (url-copy-file url file force))
         (and autoload
              (file-exists-p file)
              (load file))))
@@ -233,43 +257,43 @@ Use tilde to get user home dir.
 
 - imenu-list.el : Show dedicated buffer for imenu.
 #+BEGIN_SRC emacs-lisp
-  (__config/downloader "https://raw.githubusercontent.com/bmag/imenu-list/master/imenu-list.el" "imenu-list.el" nil t)
+  (config/_downloader "https://raw.githubusercontent.com/bmag/imenu-list/master/imenu-list.el" "imenu-list.el" nil t)
 #+END_SRC
 
 - frame-fns.el : needed by frame-cmds.el
 #+BEGIN_SRC emacs-lisp
-  (__config/downloader "https://www.emacswiki.org/emacs/download/frame-fns.el" "frame-fns.el" nil t)
+  (config/_downloader "https://www.emacswiki.org/emacs/download/frame-fns.el" "frame-fns.el" nil t)
 #+END_SRC
 
 - frame-cmds.el : needed by zomm-frm.el
 #+BEGIN_SRC emacs-lisp
-  (__config/downloader "https://www.emacswiki.org/emacs/download/frame-cmds.el" "frame-cmds.el" nil t)
+  (config/_downloader "https://www.emacswiki.org/emacs/download/frame-cmds.el" "frame-cmds.el" nil t)
 #+END_SRC
 
 - zoom-frm.el
 #+BEGIN_SRC emacs-lisp
-  (__config/downloader "https://www.emacswiki.org/emacs/download/zoom-frm.el" "zoom-frm.el" nil t)
+  (config/_downloader "https://www.emacswiki.org/emacs/download/zoom-frm.el" "zoom-frm.el" nil t)
 #+END_SRC
 
 
 - thingatpt+.el
 #+BEGIN_SRC emacs-lisp
-  (__config/downloader "https://www.emacswiki.org/emacs/download/thingatpt%2b.el" "thingatpt+.el" nil t)
+  (config/_downloader "https://www.emacswiki.org/emacs/download/thingatpt%2b.el" "thingatpt+.el" nil t)
 #+END_SRC
 
 - strings.el
 #+BEGIN_SRC emacs-lisp
-  (__config/downloader "https://www.emacswiki.org/emacs/download/strings.el" "strings.el" nil t)
+  (config/_downloader "https://www.emacswiki.org/emacs/download/strings.el" "strings.el" nil t)
 #+END_SRC
 
 - misc-fns.el
 #+BEGIN_SRC emacs-lisp
-  (__config/downloader "https://www.emacswiki.org/emacs/download/misc-fns.el" "misc-fns.el" nil t)
+  (config/_downloader "https://www.emacswiki.org/emacs/download/misc-fns.el" "misc-fns.el" nil t)
 #+END_SRC
 
 - fira-code.el
 #+BEGIN_SRC emacs-lisp
-  (__config/downloader "https://gist.githubusercontent.com/alphapapa/0d38f082e609ed059cc7f2ed9caa7e3d/raw/288f922a56451f9fb096a1514684d232241fdcda/init.el" "fira-code.el")
+  (config/_downloader "https://gist.githubusercontent.com/alphapapa/0d38f082e609ed059cc7f2ed9caa7e3d/raw/288f922a56451f9fb096a1514684d232241fdcda/init.el" "fira-code.el")
 #+END_SRC
 
 ** Bundled packages
@@ -282,31 +306,30 @@ Use tilde to get user home dir.
 ** Which-Key
 #+BEGIN_SRC emacs-lisp
   (use-package which-key
+    :custom
+    (which-key-popup-type 'minibuffer)
+    (which-key-idle-delay 0.4)
     :config
-    (progn
-      (which-key-mode t)
-      (setq which-key-popup-type 'minibuffer
-            which-key-idle-delay 0.4)))
+    (which-key-mode t))
 #+END_SRC
 
 ** Helm
 #+BEGIN_SRC emacs-lisp
   (use-package helm
     :config
-    (progn
-      (helm-mode)
-      (setq helm-ff-file-name-history-use-recentf t
-            help-window-select t
-            helm-display-header-line nil
-            helm-autoresize-mode 1)
-      (defvar helm-source-header-default-background
-        (face-attribute 'helm-source-header :background))
-      (defvar helm-source-header-default-foreground
-        (face-attribute 'helm-source-header :foreground))
-      (defvar helm-source-header-default-box
-        (face-attribute 'helm-source-header :box))
-      (defvar helm-source-header-default-height
-        (face-attribute 'helm-source-header :height)))
+    (helm-mode)
+    (setq helm-ff-file-name-history-use-recentf t
+          help-window-select t
+          helm-display-header-line nil
+          helm-autoresize-mode 1)
+    (defvar helm-source-header-default-background
+      (face-attribute 'helm-source-header :background))
+    (defvar helm-source-header-default-foreground
+      (face-attribute 'helm-source-header :foreground))
+    (defvar helm-source-header-default-box
+      (face-attribute 'helm-source-header :box))
+    (defvar helm-source-header-default-height
+      (face-attribute 'helm-source-header :height))
     :bind(("M-x" . helm-M-x)
           ("<menu>" . helm-M-x)
           ("C-x b" . helm-mini)
@@ -325,10 +348,10 @@ Use tilde to get user home dir.
 - Helm descbind
 #+BEGIN_SRC emacs-lisp
   (use-package helm-descbinds
+    :requires helm
     :config
-    (progn
-      (helm-descbinds-mode)
-      (setq helm-descbinds-window-style 'split)))
+    (helm-descbinds-mode)
+    (setq helm-descbinds-window-style 'split))
 #+END_SRC
 
 - Helm find-file keymap
@@ -350,21 +373,20 @@ Use tilde to get user home dir.
 ** Multi-term
 #+BEGIN_SRC emacs-lisp
   (use-package multi-term
-    :config
-    (progn
-      (setq multi-term-program "bash"
-            multi-term-buffer-name "shell* *"
-            multi-term-default-dir 'user-home-real-dir
-            multi-term-dedicated-select-after-open-p t)
+    :custom
+    (multi-term-program "bash")
+    (multi-term-buffer-name "shell* *")
+    (multi-term-default-dir 'user-home-real-dir)
+    (multi-term-dedicated-select-after-open-p t)
 #+END_SRC
 
 - Keybind for dedicated window
 #+BEGIN_SRC emacs-lisp
-  (global-set-key (kbd "<f1>") 'multi-term-dedicated-toggle)
+  :bind ("<f1>" . multi-term-dedicated-toggle)
 #+END_SRC
 
 #+BEGIN_SRC emacs-lisp
-  ))
+  )
 #+END_SRC
 ** Zoom-frm
 #+BEGIN_SRC emacs-lisp
@@ -376,27 +398,32 @@ Use tilde to get user home dir.
            ("C-x C-0" . zoom-in/out)))
 #+END_SRC
 ** Magit
+- Magit the magic git toolbox for emacs.
 #+BEGIN_SRC emacs-lisp
   (use-package magit
     :config
-    (progn
-      (setq magit-save-repository-buffers 'dontask
-            magit-auto-revert-mode t)
-      (global-set-key (kbd "C-x g") 'magit-status)
-      (global-set-key (kbd "C-x M-g") 'magit-dispatch-popup)))
+    (setq magit-save-repository-buffers 'dontask
+          magit-auto-revert-mode t)
+    :bind (("C-x g" . magit-status)
+           ("C-x M-g" . magit-dispatch)))
+#+END_SRC
+
+- Git tools modes
+#+BEGIN_SRC emacs-lisp
+  (use-package gitconfig-mode)
+  (use-package gitignore-mode)
 #+END_SRC
 ** Restart Emacs
 #+BEGIN_SRC emacs-lisp
   (use-package restart-emacs
     :config
-    (progn
-      (defalias 'r 'restart-emacs)
-      (when (file-exists-p
-             (expand-file-name "start.sh" user-home-dir))
-        (defun restart-emacs--start-gui-using-sh (&optional args)
-          (call-process
-           (expand-file-name "start.sh" user-home-dir)
-           nil 0 nil)))))
+    (defalias 'r 'restart-emacs)
+    (when (file-exists-p
+           (expand-file-name "start.sh" user-home-dir))
+      (defun restart-emacs--start-gui-using-sh (&optional args)
+        (call-process
+         (expand-file-name "start.sh" user-home-dir)
+         nil 0 nil))))
 #+END_SRC
 
 ** Themes
@@ -406,89 +433,98 @@ Use tilde to get user home dir.
   (use-package monokai-theme
     :defer t)
 #+END_SRC
-** Mode Line
+** Smart Mode Line
+#+BEGIN_SRC emacs-lisp
+  (use-package smart-mode-line
+    :init
+    (setq sml/show-eol t)
+    (setq sml/theme 'respectful)
+    :config 
+    (sml/setup)
+    :hook (window-setup . sml/setup))
+#+END_SRC
+** Telephone Line
 - Telephone Line
 #+BEGIN_SRC emacs-lisp
   (use-package telephone-line
+    :disabled
     :config
-    (progn
-      (setq telephone-line-lhs
-            (delete '(evil telephone-line-evil-tag-segment)
-                    telephone-line-lhs))
-      (telephone-line-mode 1)))
+    (telephone-line-defsegment* space () " ")
+    (setq telephone-line-lhs
+          '((accent . (telephone-line-vc-segment
+                       telephone-line-process-segment))
+            (nil    . (telephone-line-projectile-segment
+                       space
+                       telephone-line-buffer-segment))))
+    (setq telephone-line-rhs
+          '((nil    . (telephone-line-flycheck-segment
+                       telephone-line-misc-info-segment
+                       telephone-line-airline-position-segment 
+                       telephone-line-atom-eol-segment))
+            (accent . (telephone-line-major-mode-segment))))
+    (setq telephone-line-primary-left-separator 'telephone-line-gradient
+          telephone-line-secondary-left-separator 'telephone-line-flat
+          telephone-line-primary-right-separator 'telephone-line-gradient
+          telephone-line-secondary-right-separator 'telephone-line-flat)
+    (setq telephone-line-separator-extra-padding 2)
+    (telephone-line-mode 1))
 #+END_SRC
 ** NeoTree
-- Neo tree
+- Neotree
 #+BEGIN_SRC emacs-lisp
   (use-package neotree
     :config
-    (progn
-      ;;
-#+END_SRC
-
-- Keybind
-#+BEGIN_SRC emacs-lisp
-  (global-set-key (kbd "<f8>") 'neotree-toggle)
-#+END_SRC
-
-- Theme
-#+BEGIN_SRC emacs-lisp
-  (setq neo-theme (if (display-graphic-p) 'icons 'arrow))
-#+END_SRC
-
-#+BEGIN_SRC emacs-lisp
-  ))
+    (setq neo-theme (if (display-graphic-p) 'icons 'arrow))
+    (setq neo-smart-open t)
+    :bind (("<f8>" . neotree-toggle)))
 #+END_SRC
 ** All-the-icons
 - all-the-icons
 #+BEGIN_SRC emacs-lisp
   (use-package all-the-icons
+    :if (display-graphic-p)
     :config
-    (progn
-      ;; (all-the-icons-install-fonts)
-      ))
+    (unless (member "all-the-icons" (font-family-list))
+      (all-the-icons-install-fonts)))
 #+END_SRC
 
 - all-the-icons-dired
 #+BEGIN_SRC emacs-lisp
   (use-package all-the-icons-dired
-    :config
-    (add-hook 'dired-mode-hook #'all-the-icons-dired-mode))
+    :requires all-the-icons
+    :hook (dired-mode . all-the-icons-dired-mode))
 #+END_SRC
 ** Flycheck
 - Flycheck : On the fly syntax checking.
 #+BEGIN_SRC emacs-lisp
   (use-package flycheck
     :config
-    (progn
-      (defvaralias 'flycheck-python-pylint-executable 'python-shell-interpreter)
-      (defvaralias 'flycheck-python-flake8-executable 'python-shell-interpreter)
-      (add-hook 'prog-mode-hook #'flycheck-mode)))
+    (defvaralias 'flycheck-python-pylint-executable 'python-shell-interpreter)
+    (defvaralias 'flycheck-python-flake8-executable 'python-shell-interpreter)
+    :hook (prog-mode . flycheck-mode))
 #+END_SRC
 ** Projectile
 - Configuration
 #+BEGIN_SRC emacs-lisp
   (use-package projectile
     :config
-    (progn
-      (projectile-mode)
-      (setq projectile-enable-caching t
-            projectile-keymap-prefix (kbd "C-c p")
-            projectile-switch-project-action 'neotree-projectile-action)
-      (add-to-list 'projectile-globally-ignored-directories "node-modules")
-      (add-to-list 'projectile-globally-ignored-directories "__pycache__")))
+    (projectile-mode)
+    (setq projectile-enable-caching t
+          projectile-keymap-prefix (kbd "C-c p")
+          projectile-switch-project-action 'neotree-projectile-action)
+    (add-to-list 'projectile-globally-ignored-directories "node-modules")
+    (add-to-list 'projectile-globally-ignored-directories "__pycache__"))
 #+END_SRC
 
 - Helm integration, =C-c p h=
 #+BEGIN_SRC emacs-lisp
   (use-package helm-projectile
-    :requires projectile
+    :requires (helm projectile)
     :init
     (helm-projectile-on)
     :config
-    (progn
-      (setq projectile-completion-system 'helm)
-      (setq projectile-switch-project-action 'helm-projectile)))
+    (setq projectile-completion-system 'helm)
+    (setq projectile-switch-project-action 'helm-projectile))
 #+END_SRC
 
 ** Company
@@ -496,7 +532,11 @@ Use tilde to get user home dir.
 #+BEGIN_SRC emacs-lisp
   (use-package company
     :config
-    (add-hook 'prog-mode-hook #'company-mode))
+    (setq company-tooltip-limit 20)
+    (setq company-tooltip-align-annotations 't)
+    (setq company-idle-delay .3)
+    (setq company-begin-commands '(self-insert-command))
+    :hook (prog-mode . company-mode))
 #+END_SRC
 ** Elfeed
 - Feed reader for emacs
@@ -506,7 +546,9 @@ Use tilde to get user home dir.
 ** Basic Menu
 #+BEGIN_SRC emacs-lisp
   (use-package basic-menu
-    :load-path "lisp")
+    :if (display-graphic-p)
+    :load-path "lisp"
+    :config (menu-bar-mode t))
 #+END_SRC
 * Programming Language
 ** Python Mode
@@ -514,18 +556,16 @@ Use tilde to get user home dir.
   (use-package python
     :mode ("\\.py\\'" . python-mode)
     :interpreter ("python3" . python-mode)
-    :config
-    (progn
-      (setq py-python-command "python3"
-            python-shell-interpreter "python3"
-            python-indent-offset 4)))
+    :custom
+    (py-python-command "python3")
+    (python-shell-interpreter "python3")
+    (python-indent-offset 4))
 #+END_SRC
 
 - Goggle yapf fix syntax formatting.
 #+BEGIN_SRC emacs-lisp
   (use-package yapfify
-    :init
-    (add-hook 'python-mode-hook 'yapf-mode))
+    :hook (python-mode . yapf-mode))
 #+END_SRC
 
 - Add keybinding for F12 key. Mainly for simple python scripts.
@@ -539,24 +579,29 @@ Use tilde to get user home dir.
         (python-shell-send-buffer)
         (python-shell-switch-to-shell))))
 #+END_SRC
+
+*** Anaconda Mode
+- Enable anaconda-mode and eldoc
+#+BEGIN_SRC emacs-lisp
+  (use-package anaconda-mode
+    :requires (python)
+    :config
+    (setq anaconda-mode-installation-directory
+          (expand-file-name anaconda-mode-installation-directory))
+    :hook ((python-mode . anaconda-mode)
+           (python-mode . anaconda-eldoc-mode)))
+#+END_SRC
+
+- Integrate with company
+#+BEGIN_SRC emacs-lisp
+  (use-package company-anaconda
+    :requires (anaconda-mode company)
+    :config
+    (push 'company-anaconda company-backends))
+#+END_SRC
 ** Rust Mode
 #+BEGIN_SRC emacs-lisp
   (use-package rust-mode)
-#+END_SRC
-** Typescript Mode
-#+BEGIN_SRC emacs-lisp
-  (use-package typescript-mode)
-#+END_SRC
-** Web Mode
-#+BEGIN_SRC emacs-lisp
-  (use-package web-mode
-    :mode "\\.html\\'")
-#+END_SRC
-** Emmet
-- Emmet expand css like syntax to html, Eg. ~div.class~ to ~<div class="class"></div>~.
-#+BEGIN_SRC emacs-lisp
-  (use-package emmet-mode
-    :mode "\\.html\\'")
 #+END_SRC
 ** Markdown Mode
 #+BEGIN_SRC emacs-lisp
@@ -565,6 +610,60 @@ Use tilde to get user home dir.
            ("\\.md\\'" . markdown-mode)
            ("\\.markdown\\'" . markdown-mode))
     :init (setq markdown-command "markdown"))
+#+END_SRC
+** Language Server Protocol
+- LSP using client server protocol. Originally part of MS Visual Studio Code editor.
+#+BEGIN_SRC emacs-lisp
+  (use-package lsp-mode
+    :disabled
+    :commands lsp)
+#+END_SRC
+
+- lsp-ui : blue documentation overlay box.
+#+BEGIN_SRC emacs-lisp
+  (use-package lsp-ui
+    :requires (lsp-mode)
+    :commands lsp-ui-mode)
+#+END_SRC
+
+#+BEGIN_SRC emacs-lisp
+  (use-package company-lsp
+    :requires (lsp-mode company)
+    :commands company-lsp
+    :config
+    (push 'company-lsp company-backends))
+#+END_SRC
+** Web Development
+*** Javascript Mode
+- Using js2-mode from Steve Yedge.
+#+BEGIN_SRC emacs-lisp
+  (use-package js2-mode
+    :mode (("\\.js\\'" . js2-mode)
+           ("\\.jsx?\\'" . js2-jsx-mode)))
+#+END_SRC
+*** Typescript Mode
+#+BEGIN_SRC emacs-lisp
+  (use-package typescript-mode)
+#+END_SRC
+*** Sass scss-mode
+- Download binary from [[https://github.com/sass/dart-sass/releases][github]] and put into somewhere in $PATH e.g ~/bin
+#+BEGIN_SRC emacs-lisp
+  (use-package scss-mode
+    :config
+    (setq scss-saas-command "saas")
+    :mode "\\.scss\\'")
+#+END_SRC
+*** Emmet
+- Emmet expand css like syntax to html, Eg. ~div.class~ to ~<div class="class"></div>~.
+#+BEGIN_SRC emacs-lisp
+  (use-package emmet-mode
+    :mode "\\.html\\'")
+#+END_SRC
+*** Web Mode
+- Hilite js and css inside html file. 
+#+BEGIN_SRC emacs-lisp
+  (use-package web-mode
+    :mode "\\.html\\'")
 #+END_SRC
 * Org-mode
 ** Set variables
@@ -592,6 +691,11 @@ Use tilde to get user home dir.
         org-agenda-prefix-format "  %-17:c%?-12t% s"
         org-agenda-skip-scheduled-if-done t
         org-agenda-skip-deadline-if-done t)
+#+END_SRC
+
+- Org Export
+#+BEGIN_SRC emacs-lisp
+  (setq org-export-with-creator nil)
 #+END_SRC
 ** Org bullet
 #+BEGIN_SRC emacs-lisp
@@ -622,20 +726,18 @@ Use tilde to get user home dir.
               (when (equal major-mode 'emacs-lisp-mode)
                 (remove-hook 'prog-mode-hook #'flycheck-mode t)
                 (when (fboundp 'flycheck-mode) (flycheck-mode -1)))))
-
-
-  ;;(add-hook 'emacs-lisp-mode-hook
-  ;;          (lambda ()
-              ;;(when (and (symbolp 'org-src-mode)
-                         ;;(symbol-value 'org-src-mode))
-                ;;(remove-hook 'prog-mode-hook #'flycheck-mode t)
-                ;;(when (fboundp 'flycheck-mode) (flycheck-mode -1)))))
 #+END_SRC
 * Other Modes
 ** Fish
 - Fish shell
 #+BEGIN_SRC emacs-lisp
   (use-package fish-mode)
+#+END_SRC
+** Zone
+- Zoning after 240min, turn off with 'zone-leave-me-alone
+#+BEGIN_SRC emacs-lisp
+  (require 'zone)
+  (zone-when-idle (* 240 60))
 #+END_SRC
 * Eshell
 ** Configuration
@@ -725,7 +827,7 @@ Use tilde to get user home dir.
 ** Real =HOME= wrapper
 #+BEGIN_SRC emacs-lisp
   (defun config/wrap-real-home (fn &optional n)
-    "Wraps function in real HOME"
+    "Wraps FN function with arg N in real HOME."
     (setenv "HOME" user-home-real-dir)
     (funcall fn n)
     (setenv "HOME" user-home-dir))
@@ -765,12 +867,6 @@ Use tilde to get user home dir.
     (find-file (expand-file-name "config.org" user-emacs-directory)))
 #+END_SRC
 
-#+BEGIN_SRC emacs-lisp
-  (defun config/__tangle-config-file ()
-    (org-babel-tangle-file
-     (expand-file-name "config.org" user-emacs-directory)))
-#+END_SRC
-
 ** Compile (tangle) this file
 #+BEGIN_SRC emacs-lisp
   (defun config/tangle-config-file ()
@@ -799,15 +895,17 @@ Use tilde to get user home dir.
 ** Indent
 #+BEGIN_SRC emacs-lisp
   (defun config/infer-indentation-style ()
-    ;; if our source file uses tabs, we use tabs, if spaces spaces, and if
-    ;; neither, we use the current indent-tabs-mode
+    "Use file indent style.
+
+  If our source file use tabs, we use tabs.
+  if spaces spaces, and if neither, we use the current indent-tabs-mode."
     (let ((space-count (how-many "^  " (point-min) (point-max)))
           (tab-count (how-many "^\t" (point-min) (point-max))))
       (if (> space-count tab-count) (setq indent-tabs-mode nil))
       (if (> tab-count space-count) (setq indent-tabs-mode t))))
 #+END_SRC
 ** Sudo edit
-# Taken from http://emacsredux.com/blog/2013/04/21/edit-files-as-root/
+- Stolen from [[http://emacsredux.com/blog/2013/04/21/edit-files-as-root/][emacsredux.com]].
 #+BEGIN_SRC emacs-lisp
   (defun sudo-edit (&optional arg)
     "Edit currently visited file as root.
@@ -978,13 +1076,33 @@ Use tilde to get user home dir.
         (user-error "Already in light theme"))))
 #+END_SRC
 
+- Toggle theme
+#+BEGIN_SRC emacs-lisp
+  (defun config/__theme-toggle ()
+    (condition-case signal
+        (basic/dark-theme)
+      (user-error (basic/light-theme))))
+#+END_SRC
+
 - Enable dark-theme based on time of launch at 6pm.
 #+BEGIN_SRC emacs-lisp
   (defun config/__time-based-theme ()
     (let ((now (string-to-number (format-time-string "%H"))))
       (if (or (>= now 18) (<= now 6))
-           (basic/dark-theme)
-           (basic/light-theme))))
+           (ignore-errors (basic/dark-theme))
+           (ignore-errors (basic/light-theme)))))
+#+END_SRC
+
+- Run theme timer
+#+BEGIN_SRC emacs-lisp
+  (defvar config/__theme-timer nil)
+
+  (defun config/__theme-run-timer ()
+      (setq config/__theme-timer
+            (run-with-timer (* 30 60) (* 30 60) 'config/__time-based-theme)))
+
+  (defun config/__theme-cancel-timer ()
+      (cancel-timer config/__theme-timer))
 #+END_SRC
 * Hooks
 ** Programming modes
@@ -995,7 +1113,7 @@ Use tilde to get user home dir.
 ** Other
 - Delete trailing whitespace
 #+BEGIN_SRC emacs-lisp
-  (defun _config/before-save-hook ()
+(defun _config/before-save-hook ()
     (when (derived-mode-p 'prog-mode)
       (delete-trailing-whitespace)))
 
@@ -1079,35 +1197,38 @@ Use tilde to get user home dir.
         (message "Setting font to %s" default-font)))
 #+END_SRC
 
-- Hook when new frame created.
+- Maximize or fullscreen frame, set font, change theme.
 #+BEGIN_SRC emacs-lisp
-  (add-hook 'after-make-frame-functions
-            (lambda (frame)
-              ;; (message "New frame %S" frame)
-              (when (display-graphic-p frame)
-                (config/__set-font))))
+  (defun config/_in_display_graphic ()
+    (when (display-graphic-p)
+      ;; Maximize initial frame
+      (add-to-list 'initial-frame-alist '(fullscreen . maximized))
+      (add-to-list 'default-frame-alist '(fullscreen . maximized))
+      ;; (toggle-frame-maximized)
+
+      ;;macOS
+      (when (featurep 'cocoa) (toggle-frame-fullscreen))
+
+      (config/__set-font)
+      (config/__time-based-theme)
+      (config/__theme-run-timer)))
 #+END_SRC
 
 - Startup hook.
 #+BEGIN_SRC emacs-lisp
   (add-hook 'emacs-startup-hook
             (lambda ()
-              ;; Zoning after 240min, turn off with 'zone-leave-me-alone
-              (require 'zone)
-              (zone-when-idle (* 2400 60))
-
-              ;; Maximize initial frame
-              (add-to-list 'initial-frame-alist '(fullscreen . maximized))
-              (add-to-list 'default-frame-alist '(fullscreen . maximized))
-              ;; (toggle-frame-maximized)
-
-              ;;macOS
-              (when (featurep 'cocoa) (toggle-frame-fullscreen))
-
-              (config/__time-based-theme)
-              (config/__set-font)
-              ))
+              (config/_in_display_graphic)))
 #+END_SRC
+
+- Hook when new frame created.
+#+BEGIN_SRC emacs-lisp
+  (add-hook 'after-make-frame-functions
+            (lambda (frame)
+              (message "New frame %S" frame)
+              (config/_in_display_graphic)))
+#+END_SRC
+
 ** Starting server
 #+BEGIN_SRC emacs-lisp
    (add-hook 'after-init-hook
@@ -1121,7 +1242,7 @@ Use tilde to get user home dir.
   (add-hook 'window-setup-hook
           (lambda ()
             (message "This too shall pass")))
-#+END_SRC
+ #+END_SRC
 
 #+BEGIN_SRC emacs-lisp
   ;;; config.el ends here

@@ -54,16 +54,7 @@
 (easy-menu-define basic-menu nil
   "Menu for my configuration."
   '("Basic Config"
-    ["Config File" aldo/edit-config-file t]
-    "--"
-    ["NeoTree Toggle" neotree-toggle
-     :style toggle
-     :selected (neo-global--window-exists-p)]
-    ("NeoTree"
-     :visible (neo-global--window-exists-p)
-     ["New File" neotree-create-node]
-     ["Copy" neotree-copy-node]
-     ["Delete" neotree-delete-node])
+    ["Config File" config/edit-config-file t]
     "--"
     ("Minor Modes"
      ["Glasses Mode" glasses-mode]
@@ -71,8 +62,24 @@
      ["CamelCase" subword-mode]
      ["snake_case" superword-mode])
     ("Other"
+     ["Artist Mode" artist-mode]
      ["Butterfly" butterfly t]
      ["Birthday" animate-birthday-present])))
+
+(when (require 'neotree nil 'noerror)
+  (define-key basic-menu [neotree-toggle-menu]
+    '(menu-item "Neotree Toggle" neotree-toggle
+                :button (:toggle . (neo-global--window-exists-p))))
+  (easy-menu-define neotree-menu nil
+    "NeoTree."
+    '("NeoTree"
+      ["New File" neotree-create-node]
+      ["Copy" neotree-copy-node]
+      ["Delete" neotree-delete-node]))
+  (define-key-after basic-menu [neotree-menu]
+    (list 'menu-item "NeoTree" neotree-menu
+          :enable '(neo-global--window-exists-p))
+    'neotree-toggle-menu))
 
 ;; Put to menu-bar
 (define-key-after (lookup-key global-map [menu-bar])
@@ -88,13 +95,12 @@
   (cons "Macro" macro-menu) 'tools)
 
 ;; sudo edit
-(define-key
-  global-map
-  [menu-bar edit sudo]
+(define-key global-map [menu-bar edit sudo]
   '("Sudo Edit" . sudo-edit))
 
 ;;; To remove this menu
 ;;; (global-unset-key [menu-bar Basic\ Config])
 ;;; (global-unset-key [menu-bar Navigation])
 (provide 'basic-menu)
-;;; aldo-menu.el ends here
+
+;;; basic-menu.el ends here
