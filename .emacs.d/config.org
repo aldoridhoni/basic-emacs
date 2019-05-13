@@ -1,6 +1,6 @@
 #+TITLE: Emacs configuration
 #+AUTHOR: Aldo Ridhoni
-#+STARTUP: indent content
+#+STARTUP: indent content hidestars
 
 * Initial configuration
 ** Sane setup
@@ -432,12 +432,18 @@ Use tilde to get user home dir.
   (use-package monokai-theme
     :defer t)
 #+END_SRC
+
+- Rainbow mode for highlight color-codes
+#+BEGIN_SRC emacs-lisp
+  (use-package rainbow-mode)
+#+END_SRC
 ** Smart Mode Line
 #+BEGIN_SRC emacs-lisp
   (use-package smart-mode-line
+    :disabled
     :init
     (setq sml/show-eol t)
-    (setq sml/theme 'respectful)
+    (setq sml/theme nil)
     :config 
     (sml/setup)
     :hook (window-setup . sml/setup))
@@ -446,7 +452,6 @@ Use tilde to get user home dir.
 - Telephone Line
 #+BEGIN_SRC emacs-lisp
   (use-package telephone-line
-    :disabled
     :config
     (telephone-line-defsegment* space () " ")
     (setq telephone-line-lhs
