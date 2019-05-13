@@ -640,7 +640,9 @@ Use tilde to get user home dir.
     :mode (("README\\.md\\'" . gfm-mode)
            ("\\.md\\'" . markdown-mode)
            ("\\.markdown\\'" . markdown-mode))
-    :init (setq markdown-command "markdown"))
+    :init (setq markdown-command "markdown"
+                markdown-css-paths '("https://github.com/markdowncss/modest/raw/master/css/modest.css"))
+    :hook (markdown-mode . imenu-add-menubar-index))
 #+END_SRC
 ** Language Server Protocol
 - LSP using client server protocol. Originally part of MS Visual Studio Code editor.
