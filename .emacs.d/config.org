@@ -320,7 +320,8 @@ Use tilde to get user home dir.
     (setq helm-ff-file-name-history-use-recentf t
           help-window-select t
           helm-display-header-line nil
-          helm-autoresize-mode 1)
+          helm-autoresize-mode 1
+          helm-split-window-inside-p t)
     (defvar helm-source-header-default-background
       (face-attribute 'helm-source-header :background))
     (defvar helm-source-header-default-foreground
