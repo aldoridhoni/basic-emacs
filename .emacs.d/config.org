@@ -473,10 +473,33 @@ Use tilde to get user home dir.
 - Neotree
 #+BEGIN_SRC emacs-lisp
   (use-package neotree
+    :disabled
     :config
     (setq neo-theme (if (display-graphic-p) 'icons 'arrow))
     (setq neo-smart-open t)
     :bind (("<f8>" . neotree-toggle)))
+#+END_SRC
+** Treemacs
+- Treemacs
+#+BEGIN_SRC emacs-lisp 
+  (use-package treemacs
+    :init
+    (with-eval-after-load 'winum
+      (define-key winum-keymap (kbd "M-0") #'treemacs-select-window))
+    :bind (("C-x t" . treemacs)))
+#+END_SRC
+
+- Projectile,dired & magit
+#+BEGIN_SRC emacs-lisp
+  (use-package treemacs-projectile
+    :after treemacs projectile)
+
+  (use-package treemacs-icons-dired
+    :after treemacs dired
+    :config (treemacs-icons-dired-mode))
+
+  (use-package treemacs-magit
+    :after treemacs magi)
 #+END_SRC
 ** All-the-icons
 - all-the-icons
