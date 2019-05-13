@@ -1,3 +1,4 @@
+.#*
 .cache
 .config
 .emacs.d/session*
@@ -20,3 +21,4 @@
 .elfeed/
 README.html
 .emacs.d/anaconde-mode/
+.emacs.d/transient/
