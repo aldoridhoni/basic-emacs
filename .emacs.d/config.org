@@ -187,6 +187,11 @@ https://blog.codinghorror.com/death-to-the-space-infidels/
          mode-line-position
          mode-line-end-spaces))
 #+END_SRC
+
+- Imenu
+#+BEGIN_SRC emacs-lisp
+  (setq imenu-auto-rescan t)
+#+END_SRC
 ** Home folder hacks
 There were two scenarios to think about. First emacs is started from out start.sh script. Second if dot emacs folder is symlink to basic emacs dot emacs folder.
 - User home folder
@@ -253,11 +258,6 @@ Use tilde to get user home dir.
         (and autoload
              (file-exists-p file)
              (load file))))
-#+END_SRC
-
-- imenu-list.el : Show dedicated buffer for imenu.
-#+BEGIN_SRC emacs-lisp
-  (config/_downloader "https://raw.githubusercontent.com/bmag/imenu-list/master/imenu-list.el" "imenu-list.el" nil t)
 #+END_SRC
 
 - frame-fns.el : needed by frame-cmds.el
@@ -565,6 +565,14 @@ Use tilde to get user home dir.
 - Feed reader for emacs
 #+BEGIN_SRC emacs-lisp
   (use-package elfeed)
+#+END_SRC
+** Imenu-list
+#+BEGIN_SRC emacs-lisp
+  (use-package imenu-list
+    :bind (("C-M-_" . imenu-list-smart-toggle))
+    :config
+    (setq imenu-list-focus-after-activation t
+          imenu-list-auto-resize nil))
 #+END_SRC
 ** Basic Menu
 #+BEGIN_SRC emacs-lisp
