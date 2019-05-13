@@ -730,6 +730,16 @@ Use tilde to get user home dir.
 #+BEGIN_SRC emacs-lisp
   (setq org-export-with-creator nil)
 #+END_SRC
+
+- Org Babel
+Menjalankan org-src dan menuliskan keluarannya di file tersebut. Default key C-c C-c.
+#+BEGIN_SRC emacs-lisp
+  (org-babel-do-load-languages 'org-babel-load-languages
+      '((shell . t)
+        (python . t)
+        (gnuplot . t)))
+#+END_SRC
+
 ** Org bullet
 #+BEGIN_SRC emacs-lisp
   (use-package org-bullets
