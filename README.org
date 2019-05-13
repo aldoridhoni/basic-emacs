@@ -1,0 +1,37 @@
+#+TITLE: Emacs Basic Configuration
+#+ATTR_HTML: width 100
+#+ATTR_ORG: :width 100
+[[./basic.png]]
+
+* My Personal Basic Emacs Configuration
+
+Main configuration file at : [[./.emacs.d/config.org][config.org]]
+
+** Run
+Start basic emacs with =start.sh=.
+#+BEGIN_SRC shell
+  ./start.sh [options to emacs]
+#+END_SRC
+
+** Emacsclient
+To use with emacsclient, use server name =basic=.
+#+BEGIN_SRC bash
+  alias e='emacsclient --no-wait --socket-name=basic'
+#+END_SRC
+
+** Theme
+There are two themes defined:
+- Light theme : [[file:.emacs.d/lisp/basic-theme.el][basic-theme.el]]
+- Dark theme : monokai
+
+#+BEGIN_SRC emacs-lisp
+  (basic/light-theme)
+  (basic/dark-theme)
+#+END_SRC
+
+** Desktop file
+Copy desktop file to =~/.local/share/applications=.
+
+** Preview
+Emacs inside terminal emulator.
+[[./termtosvg.svg][termtosvg]]
