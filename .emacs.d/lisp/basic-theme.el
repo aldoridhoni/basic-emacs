@@ -44,6 +44,7 @@
  '(org-level-2 ((t (:weight normal :foreground "#43279a" :background nil))))
  '(org-level-3 ((t (:weight normal :foreground "#626fc9" :background nil))))
  '(org-code ((t (:background nil))))
+ '(org-hide ((t (:foreground "#F7F7F7"))))
  '(org-block-background ((t (:background "#f4f4f4"))))
  '(org-block-begin-line ((t (:background "#eaeaef" :foreground "#7e7e7e" :box nil :slant italic))))
  '(org-block-end-line ((t (:background "#eaeaef" :foreground "#7e7e7e" :box nil :slant italic))))
