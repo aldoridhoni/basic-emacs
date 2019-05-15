@@ -5,7 +5,7 @@
 * Initial configuration
 ** Sane setup
 - Set variables
-#+BEGIN_SRC emacs-lisp
+#+BEGIN_SRC emacs-lisp :tangle config.el
   (setq inhibit-splash-screen t
         require-final-newline t
         initial-scratch-message nil
@@ -16,50 +16,50 @@
 #+END_SRC
 
 - Disable backup
-#+BEGIN_SRC emacs-lisp
+#+BEGIN_SRC emacs-lisp :tangle config.el
   (setq backup-inhibited t
         make-backup-files nil)
 #+END_SRC
 
 - Move backup directory to temporary folder.
-#+BEGIN_SRC emacs-lisp
+#+BEGIN_SRC emacs-lisp :tangle config.el
   (setq backup-directory-alist `(("." . ,temporary-file-directory)))
 #+END_SRC
 
 - GC treshold
-#+BEGIN_SRC emacs-lisp
+#+BEGIN_SRC emacs-lisp :tangle config.el
   (setq gc-cons-threshold 10000000)
 #+END_SRC
 
 - Cursor type to bar
-#+BEGIN_SRC emacs-lisp
+#+BEGIN_SRC emacs-lisp :tangle config.el
   (setq-default cursor-type (quote bar))
 #+END_SRC
 
 - Hide menu bar
-#+BEGIN_SRC emacs-lisp
+#+BEGIN_SRC emacs-lisp :tangle config.el
   (menu-bar-mode -1)
 #+END_SRC
 
 - Hide tool bar
-#+BEGIN_SRC emacs-lisp
+#+BEGIN_SRC emacs-lisp :tangle config.el
   (when (fboundp 'tool-bar-mode)
     (tool-bar-mode -1))
 #+END_SRC
 
 - Hide scroll bar
-#+BEGIN_SRC emacs-lisp
+#+BEGIN_SRC emacs-lisp :tangle config.el
   (when (fboundp 'set-scroll-bar-mode)
     (set-scroll-bar-mode nil))
 #+END_SRC
 
 - Line highlighting
-#+BEGIN_SRC emacs-lisp
+#+BEGIN_SRC emacs-lisp :tangle config.el
   (global-hl-line-mode t)
 #+END_SRC
 
 - Line Number
-#+BEGIN_SRC emacs-lisp
+#+BEGIN_SRC emacs-lisp :tangle config.el
   (if (fboundp 'display-line-numbers-mode)
       (progn
         (add-hook 'prog-mode-hook #'display-line-numbers-mode)
@@ -69,72 +69,73 @@
 #+END_SRC
 
 - Auto refresh file form disk
-#+BEGIN_SRC emacs-lisp
+#+BEGIN_SRC emacs-lisp :tangle config.el
   (global-auto-revert-mode t)
 #+END_SRC
 
 - Window selection in cardinal direction with <shift> key.
-#+BEGIN_SRC emacs-lisp
+#+BEGIN_SRC emacs-lisp :tangle config.el
   (windmove-default-keybindings)
 #+END_SRC
 
 - Enable Reveal mode
-#+BEGIN_SRC emacs-lisp
+#+BEGIN_SRC emacs-lisp :tangle config.el
   (global-reveal-mode t)
 #+END_SRC
 
 - Auto insert closing bracket
-#+BEGIN_SRC emacs-lisp
+#+BEGIN_SRC emacs-lisp :tangle config.el
   (electric-pair-mode t)
 #+END_SRC
 
 - Turn on bracket match highlight
-#+BEGIN_SRC emacs-lisp
+#+BEGIN_SRC emacs-lisp :tangle config.el
   (show-paren-mode t)
 #+END_SRC
 
 - Save minibuffer history
-#+BEGIN_SRC emacs-lisp
+#+BEGIN_SRC emacs-lisp :tangle config.el
   (savehist-mode t)
   (setq savehist-file (expand-file-name (concat user-emacs-directory "history")))
 #+END_SRC
 
 - Display 'lambda' as 'λ'
-#+BEGIN_SRC emacs-lisp
+#+BEGIN_SRC emacs-lisp :tangle config.el
   (global-prettify-symbols-mode t)
 #+END_SRC
 
 - Indent with space
 Learn to space not tab.
-https://www.python.org/dev/peps/pep-0008/#tabs-or-spaces
-https://blog.codinghorror.com/death-to-the-space-infidels/
-#+BEGIN_SRC emacs-lisp
+[[https://www.python.org/dev/peps/pep-0008/#tabs-or-spaces][pep8]]
+[[https://blog.codinghorror.com/death-to-the-space-infidels/][codinghorror.com]]
+
+#+BEGIN_SRC emacs-lisp :tangle config.el
   (setq-default tab-width 4)
   (setq-default indent-tabs-mode nil)
 #+END_SRC
 
 - Change yes/no to y/n
-#+BEGIN_SRC emacs-lisp
+#+BEGIN_SRC emacs-lisp :tangle config.el
   (fset 'yes-or-no-p 'y-or-n-p)
 #+END_SRC
 
 - Change tramp default protocol to ssh
-#+BEGIN_SRC emacs-lisp
+#+BEGIN_SRC emacs-lisp :tangle config.el
   (setq tramp-default-method "ssh")
 #+END_SRC
 
 - Always follow symbolic link
-#+BEGIN_SRC emacs-lisp
+#+BEGIN_SRC emacs-lisp :tangle config.el
   (setq vc-follow-symlinks t)
 #+END_SRC
 
 - Dots per inch resolution 400, eg viewing PDF file.
-#+BEGIN_SRC emacs-lisp
+#+BEGIN_SRC emacs-lisp :tangle config.el
   (setq doc-view-resolution 400)
 #+END_SRC
 
 - Move all auto-save file to single auto-save folder.
-#+BEGIN_SRC emacs-lisp
+#+BEGIN_SRC emacs-lisp :tangle config.el
     (let ((auto-save-folder (expand-file-name
                              (file-name-as-directory
                               (concat user-emacs-directory "auto-save")))))
@@ -145,22 +146,22 @@ https://blog.codinghorror.com/death-to-the-space-infidels/
 #+END_SRC
 
 - Fix auto-save-list-file-prefix
-#+BEGIN_SRC emacs-lisp
+#+BEGIN_SRC emacs-lisp :tangle config.el
   (setq auto-save-list-file-prefix (expand-file-name auto-save-list-file-prefix))
 #+END_SRC
 
 - Overwrite selected text
-#+BEGIN_SRC emacs-lisp
+#+BEGIN_SRC emacs-lisp :tangle config.el
   (delete-selection-mode t)
 #+END_SRC
 
 - Trust all custom theme
-#+BEGIN_SRC emacs-lisp
+#+BEGIN_SRC emacs-lisp :tangle config.el
   (setq custom-safe-themes t)
 #+END_SRC
 
 - Set frame-title. Read [[https://www.emacswiki.org/emacs/FrameTitle][emacswiki]].
-#+BEGIN_SRC emacs-lisp
+#+BEGIN_SRC emacs-lisp :tangle config.el
   (setq-default frame-title-format
         '(""
          (buffer-file-name "%f"
@@ -169,7 +170,7 @@ https://blog.codinghorror.com/death-to-the-space-infidels/
 #+END_SRC
 
 - Mode Line format.
-#+BEGIN_SRC emacs-lisp
+#+BEGIN_SRC emacs-lisp :tangle config.el
   (setq-default mode-line-format
         `("%e"
          mode-line-front-space
@@ -189,14 +190,14 @@ https://blog.codinghorror.com/death-to-the-space-infidels/
 #+END_SRC
 
 - Imenu
-#+BEGIN_SRC emacs-lisp
+#+BEGIN_SRC emacs-lisp :tangle config.el
   (setq imenu-auto-rescan t)
 #+END_SRC
 ** Home folder hacks
 There were two scenarios to think about. First emacs is started from out start.sh script. Second if dot emacs folder is symlink to basic emacs dot emacs folder.
 - User home folder
 Use tilde to get user home dir.
-#+BEGIN_SRC emacs-lisp
+#+BEGIN_SRC emacs-lisp :tangle config.el
   (defconst user-home-dir (file-name-as-directory
                    (expand-file-name "~/")))
   (defconst user-emacs-directory (expand-file-name user-emacs-directory))
@@ -204,7 +205,7 @@ Use tilde to get user home dir.
 #+END_SRC
 
 - Get real user home directory
-#+BEGIN_SRC emacs-lisp
+#+BEGIN_SRC emacs-lisp :tangle config.el
    (defconst user-home-real-dir
      (cond
       ((getenv "REAL_HOME")
@@ -214,12 +215,12 @@ Use tilde to get user home dir.
       (t user-home-dir)))
 #+END_SRC
 
-#+BEGIN_SRC emacs-lisp
+#+BEGIN_SRC emacs-lisp :tangle config.el
   (defun abbreviate-file-name (filename) filename)
 #+END_SRC
 * Packages
 ** Meta Package - Package
-#+BEGIN_SRC emacs-lisp
+#+BEGIN_SRC emacs-lisp :tangle config.el
 (require 'package)
 (add-to-list 'package-archives '("melpa" . "https://melpa.org/packages/") t)
 (add-to-list 'package-archives '("org" . "https://orgmode.org/elpa/") t)
@@ -227,13 +228,13 @@ Use tilde to get user home dir.
 #+END_SRC
 
 ** Fetch packages-list
-#+BEGIN_SRC emacs-lisp
+#+BEGIN_SRC emacs-lisp :tangle config.el
   (unless (file-exists-p package-user-dir)
     (package-refresh-contents))
 #+END_SRC
 
 ** Install use-packages
-#+BEGIN_SRC emacs-lisp
+#+BEGIN_SRC emacs-lisp :tangle config.el
   (unless (package-installed-p 'use-package)
     (package-refresh-contents)
     (package-install 'use-package))
@@ -244,13 +245,13 @@ Use tilde to get user home dir.
 #+END_SRC
 ** External Lisp
 - Create ~site-lisp~ directory.
-#+BEGIN_SRC emacs-lisp
+#+BEGIN_SRC emacs-lisp :tangle config.el
   (unless (file-directory-p (concat user-emacs-directory "site-lisp"))
     (make-directory (concat user-emacs-directory "site-lisp")))
 #+END_SRC
 
 - Downloader
-#+BEGIN_SRC emacs-lisp
+#+BEGIN_SRC emacs-lisp :tangle config.el
   (defun config/_downloader (url filename &optional force autoload)
       (let ((file (expand-file-name filename (concat user-emacs-directory "site-lisp"))))
         (require 'url)
@@ -261,49 +262,49 @@ Use tilde to get user home dir.
 #+END_SRC
 
 - frame-fns.el : needed by frame-cmds.el
-#+BEGIN_SRC emacs-lisp
+#+BEGIN_SRC emacs-lisp :tangle config.el
   (config/_downloader "https://www.emacswiki.org/emacs/download/frame-fns.el" "frame-fns.el" nil t)
 #+END_SRC
 
 - frame-cmds.el : needed by zomm-frm.el
-#+BEGIN_SRC emacs-lisp
+#+BEGIN_SRC emacs-lisp :tangle config.el
   (config/_downloader "https://www.emacswiki.org/emacs/download/frame-cmds.el" "frame-cmds.el" nil t)
 #+END_SRC
 
 - zoom-frm.el
-#+BEGIN_SRC emacs-lisp
+#+BEGIN_SRC emacs-lisp :tangle config.el
   (config/_downloader "https://www.emacswiki.org/emacs/download/zoom-frm.el" "zoom-frm.el" nil t)
 #+END_SRC
 
 - thingatpt+.el
-#+BEGIN_SRC emacs-lisp
+#+BEGIN_SRC emacs-lisp :tangle config.el
   (config/_downloader "https://www.emacswiki.org/emacs/download/thingatpt%2b.el" "thingatpt+.el" nil t)
 #+END_SRC
 
 - strings.el
-#+BEGIN_SRC emacs-lisp
+#+BEGIN_SRC emacs-lisp :tangle config.el
   (config/_downloader "https://www.emacswiki.org/emacs/download/strings.el" "strings.el" nil t)
 #+END_SRC
 
 - misc-fns.el
-#+BEGIN_SRC emacs-lisp
+#+BEGIN_SRC emacs-lisp :tangle config.el
   (config/_downloader "https://www.emacswiki.org/emacs/download/misc-fns.el" "misc-fns.el" nil t)
 #+END_SRC
 
 - fira-code.el
-#+BEGIN_SRC emacs-lisp
+#+BEGIN_SRC emacs-lisp :tangle config.el
   (config/_downloader "https://gist.githubusercontent.com/alphapapa/0d38f082e609ed059cc7f2ed9caa7e3d/raw/288f922a56451f9fb096a1514684d232241fdcda/init.el" "fira-code.el")
 #+END_SRC
 
 ** Bundled packages
 - dired
-#+BEGIN_SRC emacs-lisp
+#+BEGIN_SRC emacs-lisp :tangle config.el
   (require 'dired)
   (put 'dired-find-alternate-file 'disabled nil)
   (define-key dired-mode-map (kbd "RET") 'dired-find-alternate-file) ; was dired-advertised-find-file
 #+END_SRC
 ** Which-Key
-#+BEGIN_SRC emacs-lisp
+#+BEGIN_SRC emacs-lisp :tangle config.el
   (use-package which-key
     :custom
     (which-key-popup-type 'minibuffer)
@@ -313,7 +314,7 @@ Use tilde to get user home dir.
 #+END_SRC
 
 ** Helm
-#+BEGIN_SRC emacs-lisp
+#+BEGIN_SRC emacs-lisp :tangle config.el
   (use-package helm
     :config
     (helm-mode)
@@ -337,7 +338,7 @@ Use tilde to get user home dir.
 #+END_SRC
 
 - Hide line-number
-#+BEGIN_SRC emacs-lisp
+#+BEGIN_SRC emacs-lisp :tangle config.el
   (add-hook 'helm-mode-hook
             (lambda ()
               (if (fboundp 'display-line-numbers-mode)
@@ -346,7 +347,7 @@ Use tilde to get user home dir.
 #+END_SRC
 
 - Helm descbind
-#+BEGIN_SRC emacs-lisp
+#+BEGIN_SRC emacs-lisp :tangle config.el
   (use-package helm-descbinds
     :requires helm
     :config
@@ -356,7 +357,7 @@ Use tilde to get user home dir.
 
 - Helm find-file keymap
 `<tab>` for entering or opening.
-#+BEGIN_SRC emacs-lisp
+#+BEGIN_SRC emacs-lisp :tangle config.el
   (with-eval-after-load 'helm-files
     (define-key helm-map (kbd "<tab>") 'helm-execute-persistent-action)
     (define-key helm-find-files-map
@@ -371,7 +372,7 @@ Use tilde to get user home dir.
 #+END_SRC
 
 ** Multi-term
-#+BEGIN_SRC emacs-lisp
+#+BEGIN_SRC emacs-lisp :tangle config.el
   (use-package multi-term
     :custom
     (multi-term-program "bash")
@@ -381,15 +382,15 @@ Use tilde to get user home dir.
 #+END_SRC
 
 - Keybind for dedicated window
-#+BEGIN_SRC emacs-lisp
+#+BEGIN_SRC emacs-lisp :tangle config.el
   :bind ("<f1>" . multi-term-dedicated-toggle)
 #+END_SRC
 
-#+BEGIN_SRC emacs-lisp
+#+BEGIN_SRC emacs-lisp :tangle config.el
   )
 #+END_SRC
 ** Zoom-frm
-#+BEGIN_SRC emacs-lisp
+#+BEGIN_SRC emacs-lisp :tangle config.el
   (use-package zoom-frm
     :load-path "site-lisp"
     :bind (("C-x C-+" . zoom-in/out)
@@ -399,7 +400,7 @@ Use tilde to get user home dir.
 #+END_SRC
 ** Magit
 - Magit the magic git toolbox for emacs.
-#+BEGIN_SRC emacs-lisp
+#+BEGIN_SRC emacs-lisp :tangle config.el
   (use-package magit
     :config
     (setq magit-save-repository-buffers 'dontask
@@ -409,12 +410,12 @@ Use tilde to get user home dir.
 #+END_SRC
 
 - Git tools modes
-#+BEGIN_SRC emacs-lisp
+#+BEGIN_SRC emacs-lisp :tangle config.el
   (use-package gitconfig-mode)
   (use-package gitignore-mode)
 #+END_SRC
 ** Restart Emacs
-#+BEGIN_SRC emacs-lisp
+#+BEGIN_SRC emacs-lisp :tangle config.el
   (use-package restart-emacs
     :config
     (defalias 'r 'restart-emacs)
@@ -427,7 +428,7 @@ Use tilde to get user home dir.
 #+END_SRC
 
 ** Themes
-#+BEGIN_SRC emacs-lisp
+#+BEGIN_SRC emacs-lisp :tangle config.el
   (use-package material-theme
     :defer t)
   (use-package monokai-theme
@@ -435,11 +436,11 @@ Use tilde to get user home dir.
 #+END_SRC
 
 - Rainbow mode for highlight color-codes
-#+BEGIN_SRC emacs-lisp
+#+BEGIN_SRC emacs-lisp :tangle config.el
   (use-package rainbow-mode)
 #+END_SRC
 ** Smart Mode Line
-#+BEGIN_SRC emacs-lisp
+#+BEGIN_SRC emacs-lisp :tangle config.el
   (use-package smart-mode-line
     :disabled
     :init
@@ -451,7 +452,7 @@ Use tilde to get user home dir.
 #+END_SRC
 ** Telephone Line
 - Telephone Line
-#+BEGIN_SRC emacs-lisp
+#+BEGIN_SRC emacs-lisp :tangle config.el
   (use-package telephone-line
     :config
     (telephone-line-defsegment* space () " ")
@@ -476,7 +477,7 @@ Use tilde to get user home dir.
 #+END_SRC
 ** NeoTree
 - Neotree
-#+BEGIN_SRC emacs-lisp
+#+BEGIN_SRC emacs-lisp :tangle config.el
   (use-package neotree
     :disabled
     :config
@@ -486,16 +487,16 @@ Use tilde to get user home dir.
 #+END_SRC
 ** Treemacs
 - Treemacs
-#+BEGIN_SRC emacs-lisp 
+#+BEGIN_SRC emacs-lisp :tangle config.el 
   (use-package treemacs
     :init
     (with-eval-after-load 'winum
       (define-key winum-keymap (kbd "M-0") #'treemacs-select-window))
-    :bind (("C-x t" . treemacs)))
+    :bind (("<f8> " . treemacs)))
 #+END_SRC
 
 - Projectile,dired & magit
-#+BEGIN_SRC emacs-lisp
+#+BEGIN_SRC emacs-lisp :tangle config.el
   (use-package treemacs-projectile
     :after treemacs projectile)
 
@@ -508,7 +509,7 @@ Use tilde to get user home dir.
 #+END_SRC
 ** All-the-icons
 - all-the-icons
-#+BEGIN_SRC emacs-lisp
+#+BEGIN_SRC emacs-lisp :tangle config.el
   (use-package all-the-icons
     :if (display-graphic-p)
     :config
@@ -517,14 +518,14 @@ Use tilde to get user home dir.
 #+END_SRC
 
 - all-the-icons-dired
-#+BEGIN_SRC emacs-lisp
+#+BEGIN_SRC emacs-lisp :tangle config.el
   (use-package all-the-icons-dired
     :requires all-the-icons
     :hook (dired-mode . all-the-icons-dired-mode))
 #+END_SRC
 ** Flycheck
 - Flycheck : On the fly syntax checking.
-#+BEGIN_SRC emacs-lisp
+#+BEGIN_SRC emacs-lisp :tangle config.el
   (use-package flycheck
     :config
     (defvaralias 'flycheck-python-pylint-executable 'python-shell-interpreter)
@@ -533,7 +534,7 @@ Use tilde to get user home dir.
 #+END_SRC
 ** Projectile
 - Configuration
-#+BEGIN_SRC emacs-lisp
+#+BEGIN_SRC emacs-lisp :tangle config.el
   (use-package projectile
     :config
     (projectile-mode)
@@ -545,7 +546,7 @@ Use tilde to get user home dir.
 #+END_SRC
 
 - Helm integration, =C-c p h=
-#+BEGIN_SRC emacs-lisp
+#+BEGIN_SRC emacs-lisp :tangle config.el
   (use-package helm-projectile
     :requires (helm projectile)
     :init
@@ -557,7 +558,7 @@ Use tilde to get user home dir.
 
 ** Company
 - Company: Complete Anything, completion framework.
-#+BEGIN_SRC emacs-lisp
+#+BEGIN_SRC emacs-lisp :tangle config.el
   (use-package company
     :config
     (setq company-tooltip-limit 20)
@@ -568,11 +569,11 @@ Use tilde to get user home dir.
 #+END_SRC
 ** Elfeed
 - Feed reader for emacs
-#+BEGIN_SRC emacs-lisp
+#+BEGIN_SRC emacs-lisp :tangle config.el
   (use-package elfeed)
 #+END_SRC
 ** Imenu-list
-#+BEGIN_SRC emacs-lisp
+#+BEGIN_SRC emacs-lisp :tangle config.el
   (use-package imenu-list
     :bind (("C-M-_" . imenu-list-smart-toggle))
     :config
@@ -580,7 +581,7 @@ Use tilde to get user home dir.
           imenu-list-auto-resize nil))
 #+END_SRC
 ** Basic Menu
-#+BEGIN_SRC emacs-lisp
+#+BEGIN_SRC emacs-lisp :tangle config.el
   (use-package basic-menu
     :if (display-graphic-p)
     :load-path "lisp"
@@ -588,7 +589,7 @@ Use tilde to get user home dir.
 #+END_SRC
 * Programming Language
 ** Python Mode
-#+BEGIN_SRC emacs-lisp
+#+BEGIN_SRC emacs-lisp :tangle config.el
   (use-package python
     :mode ("\\.py\\'" . python-mode)
     :interpreter ("python3" . python-mode)
@@ -599,13 +600,13 @@ Use tilde to get user home dir.
 #+END_SRC
 
 - Goggle yapf fix syntax formatting.
-#+BEGIN_SRC emacs-lisp
+#+BEGIN_SRC emacs-lisp :tangle config.el
   (use-package yapfify
     :hook (python-mode . yapf-mode))
 #+END_SRC
 
 - Add keybinding for F12 key. Mainly for simple python scripts.
-#+BEGIN_SRC emacs-lisp
+#+BEGIN_SRC emacs-lisp :tangle config.el
   (with-eval-after-load "python"
     (define-key python-mode-map
       (kbd "<f12>")
@@ -618,7 +619,7 @@ Use tilde to get user home dir.
 
 *** Anaconda Mode
 - Enable anaconda-mode and eldoc
-#+BEGIN_SRC emacs-lisp
+#+BEGIN_SRC emacs-lisp :tangle config.el
   (use-package anaconda-mode
     :requires (python)
     :config
@@ -629,18 +630,18 @@ Use tilde to get user home dir.
 #+END_SRC
 
 - Integrate with company
-#+BEGIN_SRC emacs-lisp
+#+BEGIN_SRC emacs-lisp :tangle config.el
   (use-package company-anaconda
     :requires (anaconda-mode company)
     :config
     (push 'company-anaconda company-backends))
 #+END_SRC
 ** Rust Mode
-#+BEGIN_SRC emacs-lisp
+#+BEGIN_SRC emacs-lisp :tangle config.el
   (use-package rust-mode)
 #+END_SRC
 ** Markdown Mode
-#+BEGIN_SRC emacs-lisp
+#+BEGIN_SRC emacs-lisp :tangle config.el
   (use-package markdown-mode
     :mode (("README\\.md\\'" . gfm-mode)
            ("\\.md\\'" . markdown-mode)
@@ -651,20 +652,20 @@ Use tilde to get user home dir.
 #+END_SRC
 ** Language Server Protocol
 - LSP using client server protocol. Originally part of MS Visual Studio Code editor.
-#+BEGIN_SRC emacs-lisp
+#+BEGIN_SRC emacs-lisp :tangle config.el
   (use-package lsp-mode
     :disabled
     :commands lsp)
 #+END_SRC
 
 - lsp-ui : blue documentation overlay box.
-#+BEGIN_SRC emacs-lisp
+#+BEGIN_SRC emacs-lisp :tangle config.el
   (use-package lsp-ui
     :requires (lsp-mode)
     :commands lsp-ui-mode)
 #+END_SRC
 
-#+BEGIN_SRC emacs-lisp
+#+BEGIN_SRC emacs-lisp :tangle config.el
   (use-package company-lsp
     :requires (lsp-mode company)
     :commands company-lsp
@@ -674,18 +675,18 @@ Use tilde to get user home dir.
 ** Web Development
 *** Javascript Mode
 - Using js2-mode from Steve Yedge.
-#+BEGIN_SRC emacs-lisp
+#+BEGIN_SRC emacs-lisp :tangle config.el
   (use-package js2-mode
     :mode (("\\.js\\'" . js2-mode)
            ("\\.jsx?\\'" . js2-jsx-mode)))
 #+END_SRC
 *** Typescript Mode
-#+BEGIN_SRC emacs-lisp
+#+BEGIN_SRC emacs-lisp :tangle config.el
   (use-package typescript-mode)
 #+END_SRC
 *** Sass scss-mode
 - Download binary from [[https://github.com/sass/dart-sass/releases][github]] and put into somewhere in $PATH e.g ~/bin
-#+BEGIN_SRC emacs-lisp
+#+BEGIN_SRC emacs-lisp :tangle config.el
   (use-package scss-mode
     :config
     (setq scss-saas-command "saas")
@@ -693,19 +694,19 @@ Use tilde to get user home dir.
 #+END_SRC
 *** Emmet
 - Emmet expand css like syntax to html, Eg. ~div.class~ to ~<div class="class"></div>~.
-#+BEGIN_SRC emacs-lisp
+#+BEGIN_SRC emacs-lisp :tangle config.el
   (use-package emmet-mode
     :mode "\\.html\\'")
 #+END_SRC
 *** Web Mode
 - Hilite js and css inside html file. 
-#+BEGIN_SRC emacs-lisp
+#+BEGIN_SRC emacs-lisp :tangle config.el
   (use-package web-mode
     :mode "\\.html\\'")
 #+END_SRC
 * Org-mode
 ** Set variables
-#+BEGIN_SRC emacs-lisp
+#+BEGIN_SRC emacs-lisp :tangle config.el
   (setq org-directory (file-name-as-directory
                        (concat user-home-real-dir "org"))
         org-reverse-note-order t
@@ -716,6 +717,7 @@ Use tilde to get user home dir.
         org-src-fontify-natively t
         org-startup-indented t
         org-bullets-mode 1
+        org-return-follows-link t
         org-M-RET-may-split-line nil)
 
   (define-key global-map "\C-cc" 'org-capture)
@@ -723,7 +725,7 @@ Use tilde to get user home dir.
 
 - Org agenda
 =C-,= to cycle thru all org file in agenda folder (org-cycle-agenda-files)
-#+BEGIN_SRC emacs-lisp
+#+BEGIN_SRC emacs-lisp :tangle config.el
   (setq org-agenda-span 14
         org-agenda-files (file-expand-wildcards (concat org-directory "*.org"))
         org-agenda-prefix-format "  %-17:c%?-12t% s"
@@ -732,13 +734,13 @@ Use tilde to get user home dir.
 #+END_SRC
 
 - Org Export
-#+BEGIN_SRC emacs-lisp
+#+BEGIN_SRC emacs-lisp :tangle config.el
   (setq org-export-with-creator nil)
 #+END_SRC
 
 - Org Babel
 Menjalankan org-src dan menuliskan keluarannya di file tersebut. Default key C-c C-c.
-#+BEGIN_SRC emacs-lisp
+#+BEGIN_SRC emacs-lisp :tangle config.el
   (org-babel-do-load-languages 'org-babel-load-languages
       '((shell . t)
         (python . t)
@@ -746,7 +748,7 @@ Menjalankan org-src dan menuliskan keluarannya di file tersebut. Default key C-c
 #+END_SRC
 
 ** Org bullet
-#+BEGIN_SRC emacs-lisp
+#+BEGIN_SRC emacs-lisp :tangle config.el
   (use-package org-bullets
     :ensure t
     :config
@@ -754,7 +756,7 @@ Menjalankan org-src dan menuliskan keluarannya di file tersebut. Default key C-c
 #+END_SRC
 
 ** Level remove bold
-#+BEGIN_SRC emacs-lisp
+#+BEGIN_SRC emacs-lisp :tangle config.el
   (add-hook 'org-mode-hook
             (lambda ()
               "Stop the org-level headers from increasing in height relative to the other text."
@@ -768,7 +770,7 @@ Menjalankan org-src dan menuliskan keluarannya di file tersebut. Default key C-c
 
 ** Org Src
 - Remove flycheck in org-src-mode for emacs-lisp-mode
-#+BEGIN_SRC emacs-lisp
+#+BEGIN_SRC emacs-lisp :tangle config.el
   (add-hook 'org-src-mode-hook
             (lambda ()
               (when (equal major-mode 'emacs-lisp-mode)
@@ -778,18 +780,18 @@ Menjalankan org-src dan menuliskan keluarannya di file tersebut. Default key C-c
 * Other Modes
 ** Fish
 - Fish shell
-#+BEGIN_SRC emacs-lisp
+#+BEGIN_SRC emacs-lisp :tangle config.el
   (use-package fish-mode)
 #+END_SRC
 ** Zone
 - Zoning after 240min, turn off with 'zone-leave-me-alone
-#+BEGIN_SRC emacs-lisp
+#+BEGIN_SRC emacs-lisp :tangle config.el
   (require 'zone)
   (zone-when-idle (* 240 60))
 #+END_SRC
 * Eshell
 ** Configuration
-#+BEGIN_SRC emacs-lisp
+#+BEGIN_SRC emacs-lisp :tangle config.el
   (use-package eshell
     :config
     (setq eshell-scroll-to-bottom-on-input 'all
@@ -804,7 +806,7 @@ Menjalankan org-src dan menuliskan keluarannya di file tersebut. Default key C-c
 #+END_SRC
 ** Visual Executeables
 - Need special display - will run in term buffer.
-#+BEGIN_SRC emacs-lisp
+#+BEGIN_SRC emacs-lisp :tangle config.el
   (use-package eshell
     :init
     (add-hook 'eshell-mode-hook
@@ -819,7 +821,7 @@ Menjalankan org-src dan menuliskan keluarannya di file tersebut. Default key C-c
 #+END_SRC
 
 ** Aliases
-#+BEGIN_SRC emacs-lisp
+#+BEGIN_SRC emacs-lisp :tangle config.el
   (use-package eshell
     :init
     (add-hook 'eshell-mode-hook
@@ -833,7 +835,7 @@ Menjalankan org-src dan menuliskan keluarannya di file tersebut. Default key C-c
 #+END_SRC
 
 ** Clear
-#+BEGIN_SRC emacs-lisp
+#+BEGIN_SRC emacs-lisp :tangle config.el
   (defun eshell/cls ()
     "Clear the eshell buffer."
     (let ((inhibit-read-only t))
@@ -842,38 +844,38 @@ Menjalankan org-src dan menuliskan keluarannya di file tersebut. Default key C-c
 #+END_SRC
 * Setting Keybindings
 ** Clipboard
-#+BEGIN_SRC emacs-lisp
+#+BEGIN_SRC emacs-lisp :tangle config.el
   (global-set-key (kbd "C-S-v") 'clipboard-yank)
 #+END_SRC
 ** Insert Line Before
-#+BEGIN_SRC emacs-lisp
+#+BEGIN_SRC emacs-lisp :tangle config.el
   (global-set-key (kbd "C-S-o") 'config/insert-line-before)
 #+END_SRC
 
 ** Aliases
 - Start of line
-#+BEGIN_SRC emacs-lisp
+#+BEGIN_SRC emacs-lisp :tangle config.el
   (global-set-key (kbd "C-a") 'back-to-indentation)
 #+END_SRC
 
 ** Edit this file kbd
-#+BEGIN_SRC emacs-lisp
+#+BEGIN_SRC emacs-lisp :tangle config.el
   (global-set-key (kbd "<f6>") 'config/edit-config-file)
 #+END_SRC
 
 ** Kill current buffer
 - Kill current buffer F9.
-#+BEGIN_SRC emacs-lisp
+#+BEGIN_SRC emacs-lisp :tangle config.el
   (global-set-key (kbd "<f9>") 'kill-this-buffer)
 #+END_SRC
 
 ** Other buffer
-#+BEGIN_SRC emacs-lisp
+#+BEGIN_SRC emacs-lisp :tangle config.el
   (global-set-key (kbd "<f5>") 'mode-line-other-buffer)
 #+END_SRC
 * Custom Functions
 ** Real =HOME= wrapper
-#+BEGIN_SRC emacs-lisp
+#+BEGIN_SRC emacs-lisp :tangle config.el
   (defun config/wrap-real-home (fn &optional n)
     "Wraps FN function with arg N in real HOME."
     (setenv "HOME" user-home-real-dir)
@@ -881,7 +883,7 @@ Menjalankan org-src dan menuliskan keluarannya di file tersebut. Default key C-c
     (setenv "HOME" user-home-dir))
 #+END_SRC
 ** Fish in multi-term
-#+BEGIN_SRC emacs-lisp
+#+BEGIN_SRC emacs-lisp :tangle config.el
   (defun config/fish-term ()
     (interactive)
     (let ((multi-term-program "fish")
@@ -890,7 +892,7 @@ Menjalankan org-src dan menuliskan keluarannya di file tersebut. Default key C-c
 #+END_SRC
 
 - Hook for term-mode
-#+BEGIN_SRC emacs-lisp
+#+BEGIN_SRC emacs-lisp :tangle config.el
   (add-hook 'term-mode-hook
             (lambda ()
               (setq term-buffer-maximum-size 10000)
@@ -902,21 +904,21 @@ Menjalankan org-src dan menuliskan keluarannya di file tersebut. Default key C-c
 #+END_SRC
 
 - Kill term buffer when process exit
-#+BEGIN_SRC emacs-lisp
+#+BEGIN_SRC emacs-lisp :tangle config.el
   (defadvice term-handle-exit
       (after term-kill-buffer-on-exit activate)
     (kill-buffer))
 #+END_SRC
 
 ** Edit this file
-#+BEGIN_SRC emacs-lisp
+#+BEGIN_SRC emacs-lisp :tangle config.el
   (defun config/edit-config-file ()
     (interactive)
     (find-file (expand-file-name "config.org" user-emacs-directory)))
 #+END_SRC
 
 ** Compile (tangle) this file
-#+BEGIN_SRC emacs-lisp
+#+BEGIN_SRC emacs-lisp :tangle config.el
   (defun config/tangle-config-file ()
     (interactive)
     (let ((file (expand-file-name "config.org" user-emacs-directory)))
@@ -926,14 +928,14 @@ Menjalankan org-src dan menuliskan keluarannya di file tersebut. Default key C-c
        "emacs-lisp")))
 #+END_SRC
 ** Open =org-directory=
-#+BEGIN_SRC emacs-lisp
+#+BEGIN_SRC emacs-lisp :tangle config.el
   (defun config/dired-org-dir ()
     (interactive)
     (dired org-directory))
 #+END_SRC
 ** Insert new line before
 - Keybind at C-S-o. Kinda inverse of open-line C-o. Can be called with universal argument C-u.
-#+BEGIN_SRC emacs-lisp
+#+BEGIN_SRC emacs-lisp :tangle config.el
   (defun config/insert-line-before (times)
     (interactive "p")
     (save-excursion
@@ -941,7 +943,7 @@ Menjalankan org-src dan menuliskan keluarannya di file tersebut. Default key C-c
      (newline times)))
 #+END_SRC
 ** Indent
-#+BEGIN_SRC emacs-lisp
+#+BEGIN_SRC emacs-lisp :tangle config.el
   (defun config/infer-indentation-style ()
     "Use file indent style.
 
@@ -954,7 +956,7 @@ Menjalankan org-src dan menuliskan keluarannya di file tersebut. Default key C-c
 #+END_SRC
 ** Sudo edit
 - Stolen from [[http://emacsredux.com/blog/2013/04/21/edit-files-as-root/][emacsredux.com]].
-#+BEGIN_SRC emacs-lisp
+#+BEGIN_SRC emacs-lisp :tangle config.el
   (defun sudo-edit (&optional arg)
     "Edit currently visited file as root.
 
@@ -968,7 +970,7 @@ Menjalankan org-src dan menuliskan keluarannya di file tersebut. Default key C-c
       (find-alternate-file (concat "/sudo::" buffer-file-name))))
 #+END_SRC
 ** Duplicate line
-#+BEGIN_SRC emacs-lisp
+#+BEGIN_SRC emacs-lisp :tangle config.el
   (defun duplicate-line()
     (interactive)
     (move-beginning-of-line 1)
@@ -979,12 +981,12 @@ Menjalankan org-src dan menuliskan keluarannya di file tersebut. Default key C-c
     (yank))
 #+END_SRC
 
-#+BEGIN_SRC emacs-lisp
+#+BEGIN_SRC emacs-lisp :tangle config.el
   (global-set-key(kbd "C-S-d") 'duplicate-line)
 #+END_SRC
 ** Cycle buffers
 - Next and Previous buffer
-#+BEGIN_SRC emacs-lisp
+#+BEGIN_SRC emacs-lisp :tangle config.el
   (setq useful-buffers-regexp '("\\*scratch\\*"))
   (setq useless-buffers-regexp '("*\.\+"))
 
@@ -1021,7 +1023,7 @@ Menjalankan org-src dan menuliskan keluarannya di file tersebut. Default key C-c
 #+END_SRC
 
 - Remap command and set keybind following setup-keys.el with [pause] / [break] key
-#+BEGIN_SRC emacs-lisp
+#+BEGIN_SRC emacs-lisp :tangle config.el
   (global-set-key [remap next-buffer] '_config/next-buffer)
   (global-set-key [remap previous-buffer] '_config/previous-buffer)
   (global-set-key [M-pause] 'next-buffer)
@@ -1029,7 +1031,7 @@ Menjalankan org-src dan menuliskan keluarannya di file tersebut. Default key C-c
 #+END_SRC
 
 - Add list of useful buffers
-#+BEGIN_SRC emacs-lisp
+#+BEGIN_SRC emacs-lisp :tangle config.el
   (push "\\*fish\\*\.\+" useful-buffers-regexp)
   (push "\\*ssh\\*\*" useful-buffers-regexp)
   (push "\\*tmux\\*\*" useful-buffers-regexp)
@@ -1038,7 +1040,7 @@ Menjalankan org-src dan menuliskan keluarannya di file tersebut. Default key C-c
   (push "\\*\\(ansi-term\\|eshell\\|shell\\|terminal.+\\)\\(-[0-9]+\\)?\\*" useful-buffers-regexp)
 #+END_SRC
 ** Empty Kill ring
-#+BEGIN_SRC emacs-lisp
+#+BEGIN_SRC emacs-lisp :tangle config.el
   (defun config/empty-killring ()
     (interactive)
     (progn
@@ -1047,14 +1049,14 @@ Menjalankan org-src dan menuliskan keluarannya di file tersebut. Default key C-c
 #+END_SRC
 ** Open current file in eww & xwidget webkit
 - Emacs Web Wowser
-#+BEGIN_SRC emacs-lisp
+#+BEGIN_SRC emacs-lisp :tangle config.el
   (defun config/open-buffer-in-eww ()
     (interactive)
     (eww (concat "file://" buffer-file-truename)))
 #+END_SRC
 
 - Xwidget Webkit
-#+BEGIN_SRC emacs-lisp
+#+BEGIN_SRC emacs-lisp :tangle config.el
   (defun config/open-buffer-in-xwidget-webkit ()
     (interactive)
     (xwidget-webkit-browse-url
@@ -1062,12 +1064,12 @@ Menjalankan org-src dan menuliskan keluarannya di file tersebut. Default key C-c
 #+END_SRC
 ** Theme
 - Append lisp folder custom-theme-load-path so we can load basic-theme
-#+BEGIN_SRC emacs-lisp
+#+BEGIN_SRC emacs-lisp :tangle config.el
   (add-to-list 'custom-theme-load-path (concat user-emacs-directory "lisp"))
 #+END_SRC
 
 - Settings
-#+BEGIN_SRC emacs-lisp
+#+BEGIN_SRC emacs-lisp :tangle config.el
   (defcustom dark-theme-enable nil
     "Set non nil turn on dark-theme at startup")
 
@@ -1077,7 +1079,7 @@ Menjalankan org-src dan menuliskan keluarannya di file tersebut. Default key C-c
 #+END_SRC
 
 - Dark theme
-#+BEGIN_SRC emacs-lisp
+#+BEGIN_SRC emacs-lisp :tangle config.el
   (defun basic/dark-theme ()
     "Set theme to value of `basic/dark-theme'."
     (interactive)
@@ -1101,7 +1103,7 @@ Menjalankan org-src dan menuliskan keluarannya di file tersebut. Default key C-c
 #+END_SRC
 
 - Light theme
-#+BEGIN_SRC emacs-lisp
+#+BEGIN_SRC emacs-lisp :tangle config.el
   (defun basic/light-theme ()
     "Set theme to value of `basic/light-theme'."
     (interactive)
@@ -1125,7 +1127,7 @@ Menjalankan org-src dan menuliskan keluarannya di file tersebut. Default key C-c
 #+END_SRC
 
 - Toggle theme
-#+BEGIN_SRC emacs-lisp
+#+BEGIN_SRC emacs-lisp :tangle config.el
   (defun config/__theme-toggle ()
     (condition-case signal
         (basic/dark-theme)
@@ -1133,7 +1135,7 @@ Menjalankan org-src dan menuliskan keluarannya di file tersebut. Default key C-c
 #+END_SRC
 
 - Enable dark-theme based on time of launch at 6pm.
-#+BEGIN_SRC emacs-lisp
+#+BEGIN_SRC emacs-lisp :tangle config.el
   (defun config/__time-based-theme ()
     (let ((now (string-to-number (format-time-string "%H"))))
       (if (or (>= now 18) (<= now 6))
@@ -1142,7 +1144,7 @@ Menjalankan org-src dan menuliskan keluarannya di file tersebut. Default key C-c
 #+END_SRC
 
 - Run theme timer
-#+BEGIN_SRC emacs-lisp
+#+BEGIN_SRC emacs-lisp :tangle config.el
   (defvar config/__theme-timer nil)
 
   (defun config/__theme-run-timer ()
@@ -1155,12 +1157,12 @@ Menjalankan org-src dan menuliskan keluarannya di file tersebut. Default key C-c
 * Hooks
 ** Programming modes
 - Infer indentation
-#+BEGIN_SRC emacs-lisp
+#+BEGIN_SRC emacs-lisp :tangle config.el
   (add-hook 'prog-mode-hook 'config/infer-indentation-style)
 #+END_SRC
 ** Other
 - Delete trailing whitespace
-#+BEGIN_SRC emacs-lisp
+#+BEGIN_SRC emacs-lisp :tangle config.el
 (defun _config/before-save-hook ()
     (when (derived-mode-p 'prog-mode)
       (delete-trailing-whitespace)))
@@ -1169,7 +1171,7 @@ Menjalankan org-src dan menuliskan keluarannya di file tersebut. Default key C-c
 #+END_SRC
 
 - Dired-x
-#+BEGIN_SRC emacs-lisp
+#+BEGIN_SRC emacs-lisp :tangle config.el
   (add-hook 'dired-load-hook
             (lambda () (load "dired-x")))
 #+END_SRC
@@ -1177,7 +1179,7 @@ Menjalankan org-src dan menuliskan keluarannya di file tersebut. Default key C-c
 * Macro
 - kmacro-name-last-macro --> Mx insert-kbd-macro
 ** Duplicate line
-#+BEGIN_SRC emacs-lisp
+#+BEGIN_SRC emacs-lisp :tangle config.el
 (fset 'dups
    (lambda (&optional arg) "Keyboard macro." (interactive "p")
 (kmacro-exec-ring-item (quote ([5 67108896 1 134217847 5 return 25] 0 "%d")) arg)))
@@ -1185,29 +1187,30 @@ Menjalankan org-src dan menuliskan keluarannya di file tersebut. Default key C-c
 * Platform Specific
 ** FreeBSD
 - Multi-term default to sh
-#+BEGIN_SRC emacs-lisp
+#+BEGIN_SRC emacs-lisp :tangle config.el
   (when (eq system-type 'berkeley-unix)
     (setq multi-term-program "sh"))
 #+END_SRC
 ** macOS aka OSX aka Mac OS X aka darwin
 - Command key as Meta
-#+BEGIN_SRC emacs-lisp
+#+BEGIN_SRC emacs-lisp :tangle config.el
   (when (eq system-type 'darwin)
     (setq mac-command-modifier 'meta)
     (setq mac-option-modifier nil)
 #+END_SRC
 
 - Multi-term default to ZSH
-#+BEGIN_SRC emacs-lisp
+#+BEGIN_SRC emacs-lisp :tangle config.el
   (setq multi-term-program "zsh")
 #+END_SRC
 
-#+BEGIN_SRC emacs-lisp
+- TODO: nreverse exec-path
+#+BEGIN_SRC emacs-lisp :tangle config.el
   )
 #+END_SRC
 ** MS Windows
 - HOME default to $APPDATA, change to $USEPROFILE or $HOMEPATH
-#+BEGIN_SRC emacs-lisp
+#+BEGIN_SRC emacs-lisp :tangle config.el
   (when (eq system-type 'windows-nt)
     (setq user-home-real-dir (file-name-as-directory
                             (getenv "USERPROFILE"))))
@@ -1215,7 +1218,7 @@ Menjalankan org-src dan menuliskan keluarannya di file tersebut. Default key C-c
 * X Window
 ** Do something if in graphic mode
 - Set font function.
-#+BEGIN_SRC emacs-lisp
+#+BEGIN_SRC emacs-lisp :tangle config.el
   (defun config/__set-font ()
       ;; load Fira Code Ligatures
       (when
@@ -1246,7 +1249,7 @@ Menjalankan org-src dan menuliskan keluarannya di file tersebut. Default key C-c
 #+END_SRC
 
 - Maximize or fullscreen frame, set font, change theme.
-#+BEGIN_SRC emacs-lisp
+#+BEGIN_SRC emacs-lisp :tangle config.el
   (defun config/_in_display_graphic ()
     (when (display-graphic-p)
       ;; Maximize initial frame
@@ -1263,14 +1266,14 @@ Menjalankan org-src dan menuliskan keluarannya di file tersebut. Default key C-c
 #+END_SRC
 
 - Startup hook.
-#+BEGIN_SRC emacs-lisp
+#+BEGIN_SRC emacs-lisp :tangle config.el
   (add-hook 'emacs-startup-hook
             (lambda ()
               (config/_in_display_graphic)))
 #+END_SRC
 
 - Hook when new frame created.
-#+BEGIN_SRC emacs-lisp
+#+BEGIN_SRC emacs-lisp :tangle config.el
   (add-hook 'after-make-frame-functions
             (lambda (frame)
               (message "New frame %S" frame)
@@ -1278,7 +1281,7 @@ Menjalankan org-src dan menuliskan keluarannya di file tersebut. Default key C-c
 #+END_SRC
 
 ** Starting server
-#+BEGIN_SRC emacs-lisp
+#+BEGIN_SRC emacs-lisp :tangle config.el
    (add-hook 'after-init-hook
          (lambda ()
             (require 'server)
@@ -1286,12 +1289,12 @@ Menjalankan org-src dan menuliskan keluarannya di file tersebut. Default key C-c
               (server-start))))
 #+END_SRC
 ** MOTD
-#+BEGIN_SRC emacs-lisp
+#+BEGIN_SRC emacs-lisp :tangle config.el
   (add-hook 'window-setup-hook
           (lambda ()
             (message "This too shall pass")))
  #+END_SRC
 
-#+BEGIN_SRC emacs-lisp
+#+BEGIN_SRC emacs-lisp :tangle config.el
   ;;; config.el ends here
 #+END_SRC
