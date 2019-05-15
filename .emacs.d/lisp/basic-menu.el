@@ -66,10 +66,10 @@
      ["Butterfly" butterfly t]
      ["Birthday" animate-birthday-present])))
 
-(when (fboundp 'neotree)
+(when (fboundp 'neo-global--window-exists-p)
   (define-key basic-menu [neotree-toggle-menu]
     '(menu-item "Neotree Toggle" neotree-toggle
-                :button (:toggle . (neo-global--window-exists-p))))
+                :button (:toggle . (quote neo-global--window-exists-p))))
   (easy-menu-define neotree-menu nil
     "NeoTree."
     '("NeoTree"
@@ -81,10 +81,10 @@
           :enable '(neo-global--window-exists-p))
     'neotree-toggle-menu))
 
-(when (fboundp 'treemacs)
+(when (fboundp 'treemacs-get-local-window)
   (define-key basic-menu [treemacs-toggle-menu]
      '(menu-item "Treemacs Toggle" treemacs
-                 :button (:toggle . (treemacs-get-local-window)))))
+                 :button (:toggle . (quote treemacs-get-local-window)))))
 
 ;; Put to menu-bar
 (define-key-after (lookup-key global-map [menu-bar])
