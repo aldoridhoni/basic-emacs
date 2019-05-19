@@ -1,9 +1,7 @@
-#+TITLE: Emacs Basic Configuration
+#+TITLE: My Emacs Configuration
 #+ATTR_HTML: width 100
 #+ATTR_ORG: :width 100
 [[./basic.png]]
-
-* My Personal Basic Emacs Configuration
 
 Main configuration file at : [[./.emacs.d/config.org][config.org]]
 
