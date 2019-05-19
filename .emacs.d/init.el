@@ -8,8 +8,13 @@
 ;; next line not work because HOME is probably not real.
 ;; (add-to-list 'exec-path "~/bin")
 (let ((config-file (expand-file-name "config.org" user-emacs-directory)))
-  (with-demoted-errors "%S"
-    (call-process "org-babel-tangle" config-file nil nil))
+  (let ((default-directory user-emacs-directory))
+    (message "call process org-babel-tangle")
+    (with-demoted-errors "%S"
+      (with-output-to-string
+        (with-current-buffer
+            standard-output
+          (call-process "org-babel-tangle" config-file t t)))))
   (org-babel-load-file config-file))
 
 ;; EXWM
