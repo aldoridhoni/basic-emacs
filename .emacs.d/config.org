@@ -1270,7 +1270,20 @@ Menjalankan org-src dan menuliskan keluarannya di file tersebut. Default key C-c
 #+BEGIN_SRC emacs-lisp
   (when (eq system-type 'windows-nt)
     (setq user-home-real-dir (file-name-as-directory
-                            (getenv "USERPROFILE"))))
+                             (getenv "USERPROFILE")))
+#+END_SRC
+
+- Tramp on Windows
+#+BEGIN_SRC emacs-lisp
+      (setq putty-directory (file-name-directory
+                             (concat user-home-real-dir "Downloads/putty/")))
+      (setq tramp-default-method "plink")
+      (when (and (not (string-match putty-directory (getenv "PATH")))
+             (file-directory-p putty-directory))
+        (setenv "PATH" (concat putty-directory ";" (getenv "PATH")))
+        (add-to-list 'exec-path putty-directory))
+      )
+
 #+END_SRC
 * X Window
 ** Do something if in graphic mode
