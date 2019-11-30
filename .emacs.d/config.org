@@ -1269,7 +1269,7 @@ Menjalankan org-src dan menuliskan keluarannya di file tersebut. Default key C-c
 ** Do something if in graphic mode
 - Set font function.
 #+BEGIN_SRC emacs-lisp
-  (defun config/__set-font ()
+  (defun config/__set-font (&optional force)
       ;; load Fira Code Ligatures
       (when
           (member "Fira Code Symbol" (font-family-list))
@@ -1292,10 +1292,11 @@ Menjalankan org-src dan menuliskan keluarannya di file tersebut. Default key C-c
                (t
                 "monospace-12"))))
 
-        (set-frame-font default-font t t)
-        (add-to-list 'initial-frame-alist `(font . ,default-font))
-        (add-to-list 'default-frame-alist `(font . ,default-font))
-        (message "Setting font to %s" default-font)))
+        (unless (or (not force)
+                    (assoc 'font default-frame-alist))
+          (set-frame-font default-font t t)
+          (add-to-list 'default-frame-alist `(font . ,default-font))
+          (message "Setting font to %s" default-font))))
 #+END_SRC
 
 - Maximize or fullscreen frame, set font, change theme.
