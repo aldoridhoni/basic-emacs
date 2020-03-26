@@ -317,6 +317,10 @@ Use tilde to get user home dir.
   (config/_downloader "https://gist.githubusercontent.com/alphapapa/0d38f082e609ed059cc7f2ed9caa7e3d/raw/288f922a56451f9fb096a1514684d232241fdcda/init.el" "fira-code.el")
 #+END_SRC
 
+- pragmatapro-prettify-symbols.el
+#+BEGIN_EXPORT emacs-lisp
+(config/_downloader "https://github.com/fabrizioschiavi/pragmatapro/raw/master/emacs_snippets/pragmatapro-prettify-symbols-v0.828.el" "pragmatapro-prettify-symbols.el")
+#+END_EXPORT
 ** Bundled packages
 - dired
 #+BEGIN_SRC emacs-lisp
@@ -1275,11 +1279,18 @@ Menjalankan org-src dan menuliskan keluarannya di file tersebut. Default key C-c
         (load "fira-code")
         (message "Loading Fira Code Ligatures"))
 
+      ;; load PragmataPro Ligatures
+      (when
+          (member "PragmataPro" (font-family-list))
+        (load "pragmatapro-prettify-symbols")
+        (add-hook 'prog-mode-hook 'prettify-hook)
+        (remove-hook 'prog-mode-hook 'add-fira-code-symbol-keywords))
+
       ;; set frame font
       (let ((default-font
               (cond
                ((find-font (font-spec :name "PragmataPro"))
-                "PragmataPro-11")
+                "PragmataPro-12")
                ((member "Source Code Pro" (font-family-list))
                 "Source Code Pro-11")
                ((member "Inconsolata" (font-family-list))
