@@ -768,8 +768,7 @@ Use tilde to get user home dir.
 Menjalankan org-src dan menuliskan keluarannya di file tersebut. Default key C-c C-c.
 #+BEGIN_SRC emacs-lisp
   (org-babel-do-load-languages 'org-babel-load-languages
-      '((shell . t)
-        (python . t)
+      '((python . t)
         (gnuplot . t)))
 #+END_SRC
 
