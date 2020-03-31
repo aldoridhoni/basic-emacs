@@ -588,9 +588,13 @@ Use tilde to get user home dir.
     :hook (prog-mode . company-mode))
 #+END_SRC
 ** Elfeed
-- Feed reader for emacs
+- Feed reader for emacs, call with ~elfeed~.
 #+BEGIN_SRC emacs-lisp
-  (use-package elfeed)
+  (use-package elfeed
+    :config
+    (setq elfeed-feeds (quote ("http://xkcd.com/rss.xml")))
+    (let ((feed-file (expand-file-name "elfeed-feed.el" user-emacs-directory)))
+      (when (file-exists-p feed-file) (load-file feed-file))))
 #+END_SRC
 ** Imenu-list
 #+BEGIN_SRC emacs-lisp
