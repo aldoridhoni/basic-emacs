@@ -318,9 +318,9 @@ Use tilde to get user home dir.
 #+END_SRC
 
 - pragmatapro-prettify-symbols.el
-#+BEGIN_EXPORT emacs-lisp
-(config/_downloader "https://github.com/fabrizioschiavi/pragmatapro/raw/master/emacs_snippets/pragmatapro-prettify-symbols-v0.828.el" "pragmatapro-prettify-symbols.el")
-#+END_EXPORT
+#+BEGIN_SRC emacs-lisp
+  (config/_downloader "https://github.com/fabrizioschiavi/pragmatapro/raw/master/emacs_snippets/pragmatapro-prettify-symbols-v0.828.el" "pragmatapro-prettify-symbols.el")
+#+END_SRC
 ** Bundled packages
 - dired
 #+BEGIN_SRC emacs-lisp
