@@ -1215,13 +1215,6 @@ Menjalankan org-src dan menuliskan keluarannya di file tersebut. Default key C-c
   (defun config/__theme-cancel-timer ()
       (cancel-timer config/__theme-timer))
 #+END_SRC
-** Listen to radio
-- Prambors
-#+BEGIN_SRC emacs-lisp
-  (defun config/prambors-radio ()
-    (interactive)
-    (call-process "vlc" nil 0 nil "-I" "dummy" "-q" "http://masima.rastream.com/masima-pramborsjakarta"))
-#+END_SRC
 * Hooks
 ** Programming modes
 - Infer indentation
