@@ -604,6 +604,13 @@ Use tilde to get user home dir.
     (setq imenu-list-focus-after-activation t
           imenu-list-auto-resize nil))
 #+END_SRC
+** Ws-butler
+Be smarter about deleting trailing whitespace.
+#+BEGIN_SRC emacs-lisp
+  (use-package ws-butler
+    :config
+    (ws-butler-global-mode))
+#+END_SRC
 ** Basic Menu
 - Load
 #+BEGIN_SRC emacs-lisp
@@ -1222,14 +1229,6 @@ Menjalankan org-src dan menuliskan keluarannya di file tersebut. Default key C-c
   (add-hook 'prog-mode-hook 'config/infer-indentation-style)
 #+END_SRC
 ** Other
-- Delete trailing whitespace
-#+BEGIN_SRC emacs-lisp
-(defun _config/before-save-hook ()
-    (when (derived-mode-p 'prog-mode)
-      (delete-trailing-whitespace)))
-
-  (add-hook 'before-save-hook '_config/before-save-hook)
-#+END_SRC
 
 - Dired-x
 #+BEGIN_SRC emacs-lisp
