@@ -651,6 +651,10 @@ Use tilde to get user home dir.
         (python-shell-switch-to-shell))))
 #+END_SRC
 
+- Virtualenv
+#+BEGIN_SRC elisp
+  (use-package pyvenv)
+#+END_SRC
 *** Anaconda Mode
 - Enable anaconda-mode and eldoc
 #+BEGIN_SRC emacs-lisp
