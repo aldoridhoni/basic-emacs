@@ -648,6 +648,39 @@ Be smarter about deleting trailing whitespace.
     :config
     (ws-butler-global-mode))
 #+END_SRC
+** Spotify
+- Spot4e
+Spotify for Emacs.
+#+BEGIN_SRC emacs-lisp
+  (use-package spot4e
+    :quelpa ((spot4e :fetcher github :repo "chiply/spot4e" ))
+    :disabled
+    :config
+    (config/_loadprivate "spot4e-refresh-token.el")
+    (when (boundp 'spot4e-refresh-token)
+      (run-with-timer 0 (* 60 59) 'spot4e-refresh)))
+#+END_SRC
+
+- Spotify.el
+Client ID and Client secret variable stored in private/spotify.el.
+Call command ~global-spotify-remote-mode~.
+#+BEGIN_SRC emacs-lisp
+  (use-package spotify
+    :quelpa ((spotify :fetcher github :repo "danielfm/spotify.el") :upgrade nil)
+    :init
+    (setq spotify-transport 'dbus)
+    (config/_loadprivate "spotify.el")
+    :config
+    (define-key spotify-mode-map (kbd "C-c .") 'spotify-command-map)
+    (global-spotify-remote-mode))
+#+END_SRC
+** Kodi-remote
+Remote for Kodi Media Player.
+#+BEGIN_SRC emacs-lisp
+  (use-package kodi-remote
+    :init
+    (setq kodi-host-name "osmc.local"))
+#+END_SRC
 ** Basic Menu
 - Load
 #+BEGIN_SRC emacs-lisp
