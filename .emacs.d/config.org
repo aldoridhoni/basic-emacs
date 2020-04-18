@@ -241,13 +241,13 @@ Use tilde to get user home dir.
 #+END_SRC
 * Packages
 ** Meta Package - Package
+Initialize ~package.el~.
 #+BEGIN_SRC emacs-lisp
 (require 'package)
 (add-to-list 'package-archives '("melpa" . "https://melpa.org/packages/") t)
 (add-to-list 'package-archives '("org" . "https://orgmode.org/elpa/") t)
 (package-initialize)
 #+END_SRC
-
 ** Fetch packages-list
 #+BEGIN_SRC emacs-lisp
   (unless (file-exists-p package-user-dir)
@@ -264,17 +264,58 @@ Use tilde to get user home dir.
   (setq use-package-always-ensure t)
   (setq use-package-compute-statistics t)
 #+END_SRC
-** External Lisp
-- Create ~site-lisp~ directory.
+** Quelpa
+Bootstrap quelpa.
 #+BEGIN_SRC emacs-lisp
-  (unless (file-directory-p (concat user-emacs-directory "site-lisp"))
-    (make-directory (concat user-emacs-directory "site-lisp")))
+  (unless (package-installed-p 'quelpa)
+      (with-temp-buffer
+        (url-insert-file-contents "https://github.com/quelpa/quelpa/raw/master/quelpa.el")
+        (eval-buffer)
+        (quelpa-self-upgrade)))
+
+  (setq quelpa-update-melpa-p nil)
+  (setq quelpa-checkout-melpa-p nil)
 #+END_SRC
 
-- Downloader
+Now integrate with ~use-package~.
+#+BEGIN_SRC emacs-lisp
+  (use-package quelpa-use-package
+    :config
+    (quelpa-use-package-activate-advice)
+    (setq use-package-ensure-function 'use-package-ensure-elpa))
+#+END_SRC
+** External Lisp
+- Variables
+#+BEGIN_SRC emacs-lisp
+  (defvar config-site-lisp "site-lisp")
+  (defvar config-private-directory "private")
+#+END_SRC
+
+- Create ~site-lisp~ directory.
+#+BEGIN_SRC emacs-lisp
+  (unless (file-directory-p (concat user-emacs-directory config-site-lisp))
+    (make-directory (concat user-emacs-directory config-site-lisp)))
+#+END_SRC
+
+-  Add ~site-lisp~ to load path
+#+BEGIN_SRC emacs-lisp
+  (add-to-list 'load-path (concat user-emacs-directory config-site-lisp))
+#+END_SRC
+
+- Load from private directory
+#+BEGIN_SRC emacs-lisp
+  (defun config/_loadprivate (file)
+    "Load FILE from private directory."
+    (let ((lisp-file
+           (expand-file-name file (concat user-emacs-directory config-private-directory))))
+      (message lisp-file)
+      (when (file-exists-p lisp-file) (load-file lisp-file))))
+#+END_SRC
+
+- Downloader simple lisp code and put in ~site-lisp~ directory.
 #+BEGIN_SRC emacs-lisp
   (defun config/_downloader (url filename &optional force autoload)
-      (let ((file (expand-file-name filename (concat user-emacs-directory "site-lisp"))))
+      (let ((file (expand-file-name filename (concat user-emacs-directory config-site-lisp))))
         (require 'url)
         (with-demoted-errors "%S" (url-copy-file url file force))
         (and autoload
@@ -282,34 +323,19 @@ Use tilde to get user home dir.
              (load file))))
 #+END_SRC
 
-- frame-fns.el : needed by frame-cmds.el
-#+BEGIN_SRC emacs-lisp
-  (config/_downloader "https://www.emacswiki.org/emacs/download/frame-fns.el" "frame-fns.el" nil t)
-#+END_SRC
-
-- frame-cmds.el : needed by zomm-frm.el
-#+BEGIN_SRC emacs-lisp
-  (config/_downloader "https://www.emacswiki.org/emacs/download/frame-cmds.el" "frame-cmds.el" nil t)
-#+END_SRC
-
-- zoom-frm.el
-#+BEGIN_SRC emacs-lisp
-  (config/_downloader "https://www.emacswiki.org/emacs/download/zoom-frm.el" "zoom-frm.el" nil t)
-#+END_SRC
-
 - thingatpt+.el
 #+BEGIN_SRC emacs-lisp
-  (config/_downloader "https://www.emacswiki.org/emacs/download/thingatpt%2b.el" "thingatpt+.el" nil t)
+  (quelpa '(thingatpt+ :fetcher url :url "https://www.emacswiki.org/emacs/download/thingatpt+.el" :stable nil :update nil :version original))
 #+END_SRC
 
 - strings.el
 #+BEGIN_SRC emacs-lisp
-  (config/_downloader "https://www.emacswiki.org/emacs/download/strings.el" "strings.el" nil t)
+  (quelpa '(strings :fetcher url :url "https://www.emacswiki.org/emacs/download/strings.el" :stable nil :update nil :version original))
 #+END_SRC
 
 - misc-fns.el
 #+BEGIN_SRC emacs-lisp
-  (config/_downloader "https://www.emacswiki.org/emacs/download/misc-fns.el" "misc-fns.el" nil t)
+  (quelpa '(misc-fns :fetcher url :url "https://www.emacswiki.org/emacs/download/misc-fns.el" :stable nil :update nil :version original))
 #+END_SRC
 
 - fira-code.el
@@ -321,6 +347,7 @@ Use tilde to get user home dir.
 #+BEGIN_SRC emacs-lisp
   (config/_downloader "https://github.com/fabrizioschiavi/pragmatapro/raw/master/emacs_snippets/pragmatapro-prettify-symbols-v0.828.el" "pragmatapro-prettify-symbols.el")
 #+END_SRC
+
 ** Bundled packages
 - dired
 #+BEGIN_SRC emacs-lisp
@@ -415,9 +442,20 @@ Use tilde to get user home dir.
   )
 #+END_SRC
 ** Zoom-frm
+- frame-fns and frame-cmds.
+#+BEGIN_SRC emacs-lisp
+  (use-package frame-fns
+    :quelpa ((frame-fns :fetcher url :url "https://www.emacswiki.org/emacs/download/frame-fns.el") :stable nil :update nil :version original))
+
+  (use-package frame-cmds
+    :quelpa ((frame-cmds :fetcher url :url "https://www.emacswiki.org/emacs/download/frame-cmds.el") :stable nil :update nil :version original))
+#+END_SRC
+
+- Zoom frame.
 #+BEGIN_SRC emacs-lisp
   (use-package zoom-frm
-    :load-path "site-lisp"
+    :requires (frame-fns frame-cmds)
+    :quelpa ((zoom-frm :fetcher url :url "https://www.emacswiki.org/emacs/download/zoom-frm.el") :stable nil :update nil :version original)
     :bind (("C-x C-+" . zoom-in/out)
            ("C-x C--" . zoom-in/out)
            ("C-x C-=" . zoom-in/out)
@@ -593,8 +631,7 @@ Use tilde to get user home dir.
   (use-package elfeed
     :config
     (setq elfeed-feeds (quote ("http://xkcd.com/rss.xml")))
-    (let ((feed-file (expand-file-name "elfeed-feed.el" user-emacs-directory)))
-      (when (file-exists-p feed-file) (load-file feed-file))))
+    (config/_loadprivate "elfeed-feed.el"))
 #+END_SRC
 ** Imenu-list
 #+BEGIN_SRC emacs-lisp
