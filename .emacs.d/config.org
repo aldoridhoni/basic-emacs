@@ -333,17 +333,17 @@ Now integrate with ~use-package~.
 
 - thingatpt+.el
 #+BEGIN_SRC emacs-lisp
-  (quelpa '(thingatpt+ :fetcher url :url "https://www.emacswiki.org/emacs/download/thingatpt+.el" :stable nil :update nil :version original))
+  (quelpa '(thingatpt+ :fetcher url :url "https://github.com/emacsmirror/emacswiki.org/raw/master/thingatpt+.el" :stable nil :update nil :version original))
 #+END_SRC
 
 - strings.el
 #+BEGIN_SRC emacs-lisp
-  (quelpa '(strings :fetcher url :url "https://www.emacswiki.org/emacs/download/strings.el" :stable nil :update nil :version original))
+  (quelpa '(strings :fetcher url :url "https://github.com/emacsmirror/emacswiki.org/raw/master/strings.el" :stable nil :update nil :version original))
 #+END_SRC
 
 - misc-fns.el
 #+BEGIN_SRC emacs-lisp
-  (quelpa '(misc-fns :fetcher url :url "https://www.emacswiki.org/emacs/download/misc-fns.el" :stable nil :update nil :version original))
+  (quelpa '(misc-fns :fetcher url :url "https://github.com/emacsmirror/emacswiki.org/raw/master/misc-fns.el" :stable nil :update nil :version original))
 #+END_SRC
 
 - fira-code.el
@@ -449,21 +449,39 @@ Now integrate with ~use-package~.
 #+BEGIN_SRC emacs-lisp
   )
 #+END_SRC
+
+** libvterm
+#+BEGIN_SRC emacs-lisp
+  (use-package vterm)
+#+END_SRC
+
+- Vterm in multi-term = multi-vterm
+#+BEGIN_SRC emacs-lisp
+  (use-package multi-vterm)
+#+END_SRC
+
+** Editorconfig
+- For reading .editorconfig file
+#+BEGIN_SRC emacs-lisp
+  (use-package editorconfig
+    :config
+    (editorconfig-mode 1))
+#+END_SRC
 ** Zoom-frm
 - frame-fns and frame-cmds.
 #+BEGIN_SRC emacs-lisp
   (use-package frame-fns
-    :quelpa ((frame-fns :fetcher url :url "https://www.emacswiki.org/emacs/download/frame-fns.el") :stable nil :update nil :version original))
+    :quelpa ((frame-fns :fetcher url :url "https://github.com/emacsmirror/emacswiki.org/raw/master/frame-fns.el") :stable nil :update nil :version original))
 
   (use-package frame-cmds
-    :quelpa ((frame-cmds :fetcher url :url "https://www.emacswiki.org/emacs/download/frame-cmds.el") :stable nil :update nil :version original))
+    :quelpa ((frame-cmds :fetcher url :url "https://github.com/emacsmirror/emacswiki.org/raw/master/frame-cmds.el") :stable nil :update nil :version original))
 #+END_SRC
 
 - Zoom frame.
 #+BEGIN_SRC emacs-lisp
   (use-package zoom-frm
     :requires (frame-fns frame-cmds)
-    :quelpa ((zoom-frm :fetcher url :url "https://www.emacswiki.org/emacs/download/zoom-frm.el") :stable nil :update nil :version original)
+    :quelpa ((zoom-frm :fetcher url :url "https://github.com/emacsmirror/emacswiki.org/raw/master/zoom-frm.el") :stable nil :update nil :version original)
     :bind (("C-x C-+" . zoom-in/out)
            ("C-x C--" . zoom-in/out)
            ("C-x C-=" . zoom-in/out)
