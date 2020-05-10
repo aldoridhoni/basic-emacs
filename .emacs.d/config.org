@@ -1434,8 +1434,8 @@ Using ctags, preferebly from ctags.io
                (t
                 "monospace-12"))))
 
-        (unless (or (not force)
-                    (assoc 'font default-frame-alist))
+        (when (or force
+                  (not (assoc 'font default-frame-alist)))
           (set-frame-font default-font t t)
           (add-to-list 'default-frame-alist `(font . ,default-font))
           (message "Setting font to %s" default-font))))
