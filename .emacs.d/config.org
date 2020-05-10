@@ -170,10 +170,18 @@ Learn to space not tab.
           " - " "Basic Emacs " emacs-version))
 #+END_SRC
 
-
 - Imenu
 #+BEGIN_SRC emacs-lisp
   (setq imenu-auto-rescan t)
+#+END_SRC
+
+- Snake game
+#+BEGIN_SRC emacs-lisp
+  (setq snake-height (floor (- (frame-height) 3))
+        snake-buffer-height (+ snake-height 2)
+        snake-width (floor (/ (frame-width) 4))
+        snake-buffer-width snake-width
+        snake-score-y snake-height)
 #+END_SRC
 ** Home folder hacks
 There were two scenarios to think about. First emacs is started from out start.sh script. Second if dot emacs folder is symlink to basic emacs dot emacs folder.
