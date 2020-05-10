@@ -1298,6 +1298,24 @@ Menjalankan org-src dan menuliskan keluarannya di file tersebut. Default key C-c
   (defun config/__theme-cancel-timer ()
       (cancel-timer config/__theme-timer))
 #+END_SRC
+** CTAGS
+Using ctags, preferebly from ctags.io
+
+- Dont ask about reload TAGS File
+#+BEGIN_SRC emacs-lisp
+  (setq tags-revert-without-query 1)
+#+END_SRC
+
+- Create new TAGS file.
+#+BEGIN_SRC emacs-lisp
+  (setq path-to-ctags "/usr/local/bin/ctags")
+
+  (defun create-tags (dir-name)
+      "Create tags file."
+      (interactive "DDirectory: ")
+      (shell-command
+       (format "%s -f TAGS -e -R %s" path-to-ctags (directory-file-name dir-name))))
+#+END_SRC
 * Hooks
 ** Programming modes
 - Infer indentation
