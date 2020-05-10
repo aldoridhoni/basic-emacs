@@ -928,6 +928,11 @@ Menjalankan org-src dan menuliskan keluarannya di file tersebut. Default key C-c
   (require 'zone)
   (zone-when-idle (* 240 60))
 #+END_SRC
+** Mutt
+- Enable mail mode
+#+BEGIN_SRC emacs-lisp
+  (add-to-list 'auto-mode-alist '("/mutt" . mail-mode))
+#+END_SRC
 * Eshell
 ** Configuration
 #+BEGIN_SRC emacs-lisp
