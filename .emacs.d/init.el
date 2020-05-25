@@ -17,6 +17,11 @@
           (call-process "org-babel-tangle" config-file t t)))))
   (org-babel-load-file config-file))
 
+;; Private per machine config.el
+(let ((local-config (expand-file-name "config.el" config-private-directory)))
+  (when (file-exists-p local-config)
+    (load local-config)))
+
 ;; EXWM
 (let ((config-exwm (expand-file-name "config-exwm.el" user-emacs-directory)))
   (when (file-exists-p config-exwm)

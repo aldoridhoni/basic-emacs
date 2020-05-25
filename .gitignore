@@ -22,3 +22,4 @@
 README.html
 .emacs.d/anaconde-mode/
 .emacs.d/transient/
+.emacs.d/private/*
