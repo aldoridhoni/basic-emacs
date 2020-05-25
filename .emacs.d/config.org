@@ -1415,8 +1415,10 @@ Using ctags, preferebly from ctags.io
       ;; set frame font
       (let ((default-font
               (cond
-               ((find-font (font-spec :name "PragmataPro"))
-                "PragmataPro-12")
+               ((find-font (font-spec :name "PragmataPro Mono Liga"))
+                "PragmataPro Mono Liga-12")
+               ((member "Input" (font-family-list))
+                "Input-12")
                ((member "Source Code Pro" (font-family-list))
                 "Source Code Pro-11")
                ((member "Inconsolata" (font-family-list))
