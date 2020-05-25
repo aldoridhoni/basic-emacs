@@ -725,6 +725,17 @@ Remote for Kodi Media Player.
     (load "basic-menu"))
 #+END_SRC
 * Programming Language
+** Golang Mode
+- go-mode
+#+BEGIN_SRC emacs-lisp
+  (use-package go-mode
+    :mode ("\\.go\\'" . go-mode)
+    :init
+    (add-hook 'go-mode-hook
+              (lambda ()
+                (add-hook 'before-save-hook 'gofmt-before-save))))
+#+END_SRC
+
 ** Python Mode
 #+BEGIN_SRC emacs-lisp
   (use-package python
