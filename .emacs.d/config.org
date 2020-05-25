@@ -694,7 +694,8 @@ Call command ~global-spotify-remote-mode~.
   (use-package spotify
     :quelpa ((spotify :fetcher github :repo "danielfm/spotify.el") :upgrade nil)
     :init
-    (setq spotify-transport 'dbus)
+    (when (fboundp 'dbus-interface-dbus)
+      (setq spotify-transport 'dbus))
     (config/_loadprivate "spotify.el")
     :config
     (define-key spotify-mode-map (kbd "C-c .") 'spotify-command-map)
