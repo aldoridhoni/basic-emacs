@@ -898,23 +898,6 @@ Menjalankan org-src dan menuliskan keluarannya di file tersebut. Default key C-c
         (gnuplot . t)))
 #+END_SRC
 
-** Org Export HTML KBD Command
-- TODO: receive user input.
-#+BEGIN_SRC emacs-lisp
-  (defun config/org-html-kbd-macro ()
-    (interactive)
-    (if (use-region-p)
-        (save-excursion
-          (save-restriction
-            (kill-region (region-beginning) (region-end))
-            (insert "{{{kbd(")
-            (yank)
-            (insert ")}}}")))
-      (insert "{{{kbd(")
-      (insert (read-string "Enter key: "))
-      (insert ")}}}")))
-#+END_SRC
-
 ** Org bullet
 #+BEGIN_SRC emacs-lisp
   (use-package org-bullets
