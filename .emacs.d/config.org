@@ -698,8 +698,7 @@ Call command ~global-spotify-remote-mode~.
       (setq spotify-transport 'dbus))
     (config/_loadprivate "spotify.el")
     :config
-    (define-key spotify-mode-map (kbd "C-c .") 'spotify-command-map)
-    (global-spotify-remote-mode))
+    (define-key spotify-mode-map (kbd "C-c .") 'spotify-command-map))
 #+END_SRC
 ** Kodi-remote
 Remote for Kodi Media Player.
