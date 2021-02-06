@@ -4,6 +4,9 @@
 (setq custom-file (make-temp-file "emacs-custom"))
 (load custom-file)
 
+;; Supress cl is deprecated warning
+(setq byte-compile-warnings '(cl-functions))
+
 ;; Call python script to tangle this faster
 ;; next line not work because HOME is probably not real.
 ;; (add-to-list 'exec-path "~/bin")
