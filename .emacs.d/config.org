@@ -578,6 +578,8 @@ Now integrate with ~use-package~.
     :init
     (with-eval-after-load 'winum
       (define-key winum-keymap (kbd "M-0") #'treemacs-select-window))
+    :config
+    (treemacs-follow-mode t)
     :bind (("<f8> " . treemacs)))
 #+END_SRC
 
@@ -614,8 +616,10 @@ Now integrate with ~use-package~.
 #+BEGIN_SRC emacs-lisp
   (use-package flycheck
     :config
-    (defvaralias 'flycheck-python-pylint-executable 'python-shell-interpreter)
-    (defvaralias 'flycheck-python-flake8-executable 'python-shell-interpreter)
+  (setq flycheck-python-pylint-executable python-shell-interpreter)
+  (defvaralias 'flycheck-python-pylint-executable 'python-shell-interpreter)
+  (setq flycheck-python-flake8-executable python-shell-interpreter)
+  (defvaralias 'flycheck-python-flake8-executable 'python-shell-interpreter)
     :hook (prog-mode . flycheck-mode))
 #+END_SRC
 ** Projectile
@@ -895,9 +899,12 @@ Remote for Kodi Media Player.
 - Org Babel
 Menjalankan org-src dan menuliskan keluarannya di file tersebut. Default key C-c C-c.
 #+BEGIN_SRC emacs-lisp
-  (org-babel-do-load-languages 'org-babel-load-languages
-      '((python . t)
-        (gnuplot . t)))
+    (org-babel-do-load-languages 'org-babel-load-languages
+        '((python . t)
+          (gnuplot . t)
+          (emacs-lisp . t)
+          (shell . t)
+          (org . t)))
 #+END_SRC
 
 ** Org bullet
@@ -1444,6 +1451,7 @@ Using ctags, preferebly from ctags.io
   (defun config/_in_display_graphic ()
     (when (display-graphic-p)
       ;; Maximize initial frame
+      (setq frame-resize-pixelwise t)
       (add-to-list 'initial-frame-alist '(fullscreen . maximized))
       (add-to-list 'default-frame-alist '(fullscreen . maximized))
       ;; (toggle-frame-maximized)
@@ -1473,11 +1481,13 @@ Using ctags, preferebly from ctags.io
 
 ** Starting server
 #+BEGIN_SRC emacs-lisp
-   (add-hook 'after-init-hook
-         (lambda ()
-            (require 'server)
-            (unless (server-running-p server-name)
-              (server-start))))
+  (add-hook 'after-init-hook
+        (lambda ()
+           (require 'server)
+           (unless (server-running-p server-name)
+             (condition-case nil
+                 (server-start)
+               (error nil)))))
 #+END_SRC
 ** MOTD
 #+BEGIN_SRC emacs-lisp
