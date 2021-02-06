@@ -453,7 +453,7 @@ Now integrate with ~use-package~.
 ** libvterm
 #+BEGIN_SRC emacs-lisp
   (use-package vterm
-    :if (memq window-system '(mac ns x)))
+    :if (memq system-type '(darwin gnu/linux berkeley-unix)))
 #+END_SRC
 
 - Vterm in multi-term = multi-vterm
@@ -698,6 +698,7 @@ Client ID and Client secret variable stored in private/spotify.el.
 Call command ~global-spotify-remote-mode~.
 #+BEGIN_SRC emacs-lisp
   (use-package spotify
+    :unless (memq system-type '(windows-nt cygwin))
     :quelpa ((spotify :fetcher github :repo "danielfm/spotify.el") :upgrade nil)
     :init
     (when (fboundp 'dbus-interface-dbus)
