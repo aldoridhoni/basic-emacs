@@ -452,12 +452,14 @@ Now integrate with ~use-package~.
 
 ** libvterm
 #+BEGIN_SRC emacs-lisp
-  (use-package vterm)
+  (use-package vterm
+    :if (memq window-system '(mac ns x)))
 #+END_SRC
 
 - Vterm in multi-term = multi-vterm
 #+BEGIN_SRC emacs-lisp
-  (use-package multi-vterm)
+  (use-package multi-vterm
+    :requires (vterm))
 #+END_SRC
 
 ** Editorconfig
