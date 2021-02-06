@@ -1,6 +1,11 @@
 ;;; init.el --- Emacs init.el
 ;; (package-initialize)
 
+;;; Code:
+;; Load before-init.el
+(when (file-exists-p (concat user-emacs-directory "before-init.el"))
+  (load (concat user-emacs-directory "before-init.el")))
+
 (setq custom-file (make-temp-file "emacs-custom"))
 (load custom-file)
 
