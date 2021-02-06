@@ -26,7 +26,8 @@
   (org-babel-load-file config-file))
 
 ;; Private per machine config.el
-(let ((local-config (expand-file-name "config.el" config-private-directory)))
+(let ((local-config (expand-file-name "config.el"
+                                      (concat user-emacs-directory config-private-directory))))
   (when (file-exists-p local-config)
     (load local-config)))
 
