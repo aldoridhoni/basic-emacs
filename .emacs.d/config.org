@@ -13,7 +13,8 @@
         inhibit-startup-echo-area-message nil
         delete-trailing-lines nil
         visible-bell t
-        server-name "basic")
+        server-name "basic"
+        warning-minimum-level :emergency)
 #+END_SRC
 
 - Disable backup
@@ -453,12 +454,14 @@ Now integrate with ~use-package~.
 ** libvterm
 #+BEGIN_SRC emacs-lisp
   (use-package vterm
+    :disabled
     :if (memq system-type '(darwin gnu/linux berkeley-unix)))
 #+END_SRC
 
 - Vterm in multi-term = multi-vterm
 #+BEGIN_SRC emacs-lisp
   (use-package multi-vterm
+    :disabled
     :requires (vterm))
 #+END_SRC
 
@@ -500,11 +503,6 @@ Now integrate with ~use-package~.
            ("C-x M-g" . magit-dispatch)))
 #+END_SRC
 
-- Git tools modes
-#+BEGIN_SRC emacs-lisp
-  (use-package gitconfig-mode)
-  (use-package gitignore-mode)
-#+END_SRC
 ** Restart Emacs
 #+BEGIN_SRC emacs-lisp
   (use-package restart-emacs
@@ -616,10 +614,8 @@ Now integrate with ~use-package~.
 #+BEGIN_SRC emacs-lisp
   (use-package flycheck
     :config
-  (setq flycheck-python-pylint-executable python-shell-interpreter)
-  (defvaralias 'flycheck-python-pylint-executable 'python-shell-interpreter)
-  (setq flycheck-python-flake8-executable python-shell-interpreter)
-  (defvaralias 'flycheck-python-flake8-executable 'python-shell-interpreter)
+    (defvaralias 'flycheck-python-pylint-executable 'python-shell-interpreter)
+    (defvaralias 'flycheck-python-flake8-executable 'python-shell-interpreter)
     :hook (prog-mode . flycheck-mode))
 #+END_SRC
 ** Projectile
@@ -662,6 +658,7 @@ Now integrate with ~use-package~.
 #+BEGIN_SRC emacs-lisp
   (use-package elfeed
     :config
+    :disabled
     (setq elfeed-feeds (quote ("http://xkcd.com/rss.xml")))
     (config/_loadprivate "elfeed-feed.el"))
 #+END_SRC
@@ -698,6 +695,7 @@ Client ID and Client secret variable stored in private/spotify.el.
 Call command ~global-spotify-remote-mode~.
 #+BEGIN_SRC emacs-lisp
   (use-package spotify
+    :disabled
     :unless (memq system-type '(windows-nt cygwin))
     :quelpa ((spotify :fetcher github :repo "danielfm/spotify.el") :upgrade nil)
     :init
@@ -826,6 +824,7 @@ Remote for Kodi Media Player.
 
 #+BEGIN_SRC emacs-lisp
   (use-package company-lsp
+    :disabled
     :requires (lsp-mode company)
     :commands company-lsp
     :config
