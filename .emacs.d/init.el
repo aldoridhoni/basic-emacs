@@ -25,13 +25,14 @@
   (if (file-newer-than-file-p config-file config-lisp)
       (progn
         (let ((default-directory user-emacs-directory))
-          (message "call process org-babel-tangle")
-          (with-demoted-errors "%S"
-            (with-output-to-string
-              (with-current-buffer
-                  standard-output
-                (call-process "org-babel-tangle" config-file t t)))))
-        (org-babel-load-file config-file))
+          (if (locate-file "org-babel-tangle" exec-path exec-suffixes 1)
+              (progn
+                (message "call process org-babel-tangle")
+                (with-demoted-errors "%S"
+                  (with-output-to-string
+                    (with-current-buffer standard-output
+                      (call-process "org-babel-tangle" config-file t t)))))
+        (org-babel-load-file config-file))))
     (load config-lisp)))
 
 ;; Private per machine config.el
