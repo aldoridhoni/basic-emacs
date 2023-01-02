@@ -355,7 +355,7 @@ Now integrate with ~use-package~.
 
 - pragmatapro-prettify-symbols.el
 #+BEGIN_SRC emacs-lisp
-  (config/_downloader "https://github.com/fabrizioschiavi/pragmatapro/raw/master/emacs_snippets/pragmatapro-prettify-symbols-v0.828.el" "pragmatapro-prettify-symbols.el")
+  (config/_downloader "https://github.com/fabrizioschiavi/pragmatapro/raw/master/emacs_snippets/pragmatapro-prettify-symbols-v0.829.el" "pragmatapro-prettify-symbols.el")
 #+END_SRC
 
 ** Bundled packages
@@ -1446,14 +1446,15 @@ Using ctags, preferebly from ctags.io
       (when
           (member "PragmataPro" (font-family-list))
         (load "pragmatapro-prettify-symbols")
+        (add-hook 'text-mode-hook 'prettify-hook)
         (add-hook 'prog-mode-hook 'prettify-hook)
         (remove-hook 'prog-mode-hook 'add-fira-code-symbol-keywords))
 
       ;; set frame font
       (let ((default-font
               (cond
-               ((find-font (font-spec :name "PragmataPro Mono Liga"))
-                "PragmataPro Mono Liga-12")
+               ((find-font (font-spec :name "PragmataPro Liga" :style "Regular"))
+                "PragmataPro Liga-12")
                ((member "Input" (font-family-list))
                 "Input-12")
                ((member "Source Code Pro" (font-family-list))
