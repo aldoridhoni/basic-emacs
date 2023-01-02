@@ -252,10 +252,11 @@ Use tilde to get user home dir.
 ** Meta Package - Package
 Initialize ~package.el~.
 #+BEGIN_SRC emacs-lisp
-(require 'package)
-(add-to-list 'package-archives '("melpa" . "https://melpa.org/packages/") t)
-(add-to-list 'package-archives '("org" . "https://orgmode.org/elpa/") t)
-(package-initialize)
+  (require 'package)
+  (add-to-list 'package-archives '("melpa" . "https://melpa.org/packages/") t)
+  (add-to-list 'package-archives '("melpa-stable" . "https://stable.melpa.org/packages/") t)
+  (add-to-list 'package-archives '("org" . "https://orgmode.org/elpa/") t)
+  (package-initialize)
 #+END_SRC
 ** Fetch packages-list
 #+BEGIN_SRC emacs-lisp
@@ -646,13 +647,22 @@ Now integrate with ~use-package~.
 - Company: Complete Anything, completion framework.
 #+BEGIN_SRC emacs-lisp
   (use-package company
+    :after (lsp-mode)
     :config
     (setq company-tooltip-limit 20)
     (setq company-tooltip-align-annotations 't)
-    (setq company-idle-delay .3)
+    (setq company-idle-delay .0)
+    (setq company-minimum-prefix-length 1)
     (setq company-begin-commands '(self-insert-command))
-    :hook (prog-mode . company-mode))
+    :hook (lsp-mode . company-mode))
 #+END_SRC
+
+- company-box: company with icons
+  #+begin_src emacs-lisp
+    (use-package company-box
+      :requires (company)
+      :hook (company-mode . company-box-mode))
+  #+end_src
 ** Elfeed
 - Feed reader for emacs, call with ~elfeed~.
 #+BEGIN_SRC emacs-lisp
@@ -793,6 +803,8 @@ Remote for Kodi Media Player.
     :config
     (push 'company-anaconda company-backends))
 #+END_SRC
+
+Mostly using lsp-mode now, see LSP section below.
 ** Rust Mode
 #+BEGIN_SRC emacs-lisp
   (use-package rust-mode)
@@ -806,29 +818,6 @@ Remote for Kodi Media Player.
     :init (setq markdown-command "markdown"
                 markdown-css-paths '("https://github.com/markdowncss/modest/raw/master/css/modest.css"))
     :hook (markdown-mode . imenu-add-menubar-index))
-#+END_SRC
-** Language Server Protocol
-- LSP using client server protocol. Originally part of MS Visual Studio Code editor.
-#+BEGIN_SRC emacs-lisp
-  (use-package lsp-mode
-    :disabled
-    :commands lsp)
-#+END_SRC
-
-- lsp-ui : blue documentation overlay box.
-#+BEGIN_SRC emacs-lisp
-  (use-package lsp-ui
-    :requires (lsp-mode)
-    :commands lsp-ui-mode)
-#+END_SRC
-
-#+BEGIN_SRC emacs-lisp
-  (use-package company-lsp
-    :disabled
-    :requires (lsp-mode company)
-    :commands company-lsp
-    :config
-    (push 'company-lsp company-backends))
 #+END_SRC
 ** Web Development
 *** Javascript Mode
@@ -862,6 +851,45 @@ Remote for Kodi Media Player.
   (use-package web-mode
     :mode "\\.html\\'")
 #+END_SRC
+
+* Language Server Protocol
+- LSP using client server protocol. Originally part of MS Visual Studio Code editor. [[https://github.com/emacs-lsp/lsp-mode][github repo]].
+#+BEGIN_SRC emacs-lisp
+  (use-package lsp-mode
+    :pin melpa-stable
+    :init (setq lsp-keymap-prefix "C-c l")
+    :hook ((html-mode . lsp)
+           (css-mode . lsp)
+           (python-mode . lsp)))
+#+END_SRC
+
+For python we need to install `pip install "python-lsp-server[yapf]"`.
+
+- lsp-ui : blue documentation overlay box.
+#+BEGIN_SRC emacs-lisp
+  (use-package lsp-ui
+    :pin melpa-stable
+    :requires (lsp-mode)
+    :commands lsp-ui-mode)
+#+END_SRC
+
+- helm-lsp
+#+begin_src emacs-lisp
+  (use-package helm-lsp
+    :pin melpa-stable
+    :config
+    (define-key lsp-mode-map [remap xref-find-apropos] #'helm-lsp-workspace-symbol)
+    :commands helm-lsp-workspace-symbol)
+#+end_src
+
+- treemacs integration
+  #+begin_src emacs-lisp
+    (use-package lsp-treemacs
+      :pin melpa-stable
+      :config
+      (lsp-treemacs-sync-mode 1)
+      :commands lsp-treemacs-errors-list)
+  #+end_src
 * Org-mode
 ** Set variables
 #+BEGIN_SRC emacs-lisp
