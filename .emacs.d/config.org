@@ -301,10 +301,12 @@ Now integrate with ~use-package~.
   (defvar config-private-directory "private")
 #+END_SRC
 
-- Create ~site-lisp~ directory.
+- Create ~site-lisp~ and ~private~ directory.
 #+BEGIN_SRC emacs-lisp
   (unless (file-directory-p (concat user-emacs-directory config-site-lisp))
     (make-directory (concat user-emacs-directory config-site-lisp)))
+  (unless (file-directory-p (concat user-emacs-directory config-private-directory))
+    (make-directory (concat user-emacs-directory config-private-directory)))
 #+END_SRC
 
 -  Add ~site-lisp~ to load path
@@ -319,7 +321,8 @@ Now integrate with ~use-package~.
     (let ((lisp-file
            (expand-file-name file (concat user-emacs-directory config-private-directory))))
       (message lisp-file)
-      (when (file-exists-p lisp-file) (load-file lisp-file))))
+      (when (file-exists-p lisp-file) (load lisp-file))))
+  (config/_loadprivate "pre-private.el")
 #+END_SRC
 
 - Downloader simple lisp code and put in ~site-lisp~ directory.
@@ -1490,7 +1493,8 @@ Using ctags, preferebly from ctags.io
 
       (config/__set-font)
       (config/__time-based-theme)
-      (config/__theme-run-timer)))
+      (config/__theme-run-timer)
+      (config/_loadprivate "post-private.el")))
 #+END_SRC
 
 - Startup hook.
