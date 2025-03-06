@@ -897,7 +897,13 @@ Mostly using lsp-mode now, see LSP section below.
   (use-package web-mode
     :mode "\\.html\\'")
 #+END_SRC
-
+** Elixir
+Using Tree-Sitter's elixir language.
+#+begin_src emacs-lisp
+  (use-package elixir-ts-mode
+    :mode (("\\.ex\\'" . elixir-ts-mode)
+           ("\\.exs\\'" . elixir-ts-mode)))
+#+end_src
 * Language Server Protocol
 - LSP using client server protocol. Originally part of MS Visual Studio Code editor. [[https://github.com/emacs-lsp/lsp-mode][github repo]].
 #+BEGIN_SRC emacs-lisp
